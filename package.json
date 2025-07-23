@@ -22,7 +22,6 @@
     "react-icons": "^5.4.0",
     "react-leaflet": "^4.2.1",
     "react-map-gl": "^7.1.7",
-    "react-notification-alert": "0.0.13",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
     "react-scripts": "5.0.1",
