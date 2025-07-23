@@ -7,7 +7,7 @@
     "@xyflow/react": "^12.4.4",
     "ajv": "^8.16.0",
     "bootstrap": "^4.6.2",
-    "chartist": "0.11.4",
+    "chartist": "^0.10.1",
     "dayjs": "^1.11.13",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.9",

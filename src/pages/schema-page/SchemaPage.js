@@ -561,11 +561,21 @@ export default function SchemaPage() {
                 <>
                     <Row>
                         <Col md={6}>
-                            <h4>Dataset Name</h4>
+                            <h4>
+                                Dataset Name
+                                <OverlayTrigger placement="top" overlay={<Tooltip>Name of the dataset</Tooltip>}>
+                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                                </OverlayTrigger>
+                            </h4>
                             <Form.Control type="text" name="name" value={datasetName} onChange={handleDatasetName} aria-label="Dataset Name" />
                         </Col>
                         <Col md={3}>
-                            <h4>Site</h4>
+                            <h4>
+                                Site
+                                <OverlayTrigger placement="top" overlay={<Tooltip>Schema used for the dataset</Tooltip>}>
+                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                                </OverlayTrigger>
+                            </h4>
                             <Form.Select style={{
                                 padding: "10px",
                                 cursor: "pointer",
@@ -602,21 +612,31 @@ export default function SchemaPage() {
                         <Col md={4}>
                             <h4>
                                 Period
-                                <OverlayTrigger placement="top" overlay={<Tooltip>Number of time steps per day (e.g., 24 for hourly data)</Tooltip>}>
+                                <OverlayTrigger placement="top" overlay={<Tooltip>Interval between time steps (in minutes)</Tooltip>}>
                                     <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
                                 </OverlayTrigger>
                             </h4>
                             <Form.Control type="number" name="period" min={1} value={datasetPeriod} onChange={handleDatasetPeriod} aria-label="Period" />
                         </Col>
                         <Col md={4}>
-                            <h4>From</h4>
+                            <h4>
+                                From
+                                <OverlayTrigger placement="top" overlay={<Tooltip>Start date of the period</Tooltip>}>
+                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                                </OverlayTrigger>
+                            </h4>
                             <Form.Control type="datetime-local" name="from" value={dateFrom} onChange={handleDateFrom} aria-label="From" isInvalid={fromError} />
                             {fromError && (
                                 <p style={{ color: 'red' }}>{fromError}</p>
                             )}
                         </Col>
                         <Col md={4}>
-                            <h4>Until</h4>
+                            <h4>
+                                Until
+                                <OverlayTrigger placement="top" overlay={<Tooltip>End date of the period</Tooltip>}>
+                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                                </OverlayTrigger>
+                            </h4>
                             <Form.Control type="datetime-local" name="until" value={dateUntil} onChange={handleDateUntil} aria-label="Until" isInvalid={untilError} />
                             {untilError && (
                                 <p style={{ color: 'red' }}>{untilError}</p>
@@ -626,7 +646,12 @@ export default function SchemaPage() {
 
                     <Row>
                         <Col>
-                            <h4>Site Name</h4>
+                            <h4>
+                                Site Name
+                                <OverlayTrigger placement="top" overlay={<Tooltip>Name of the schema</Tooltip>}>
+                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                                </OverlayTrigger>
+                            </h4>
                             <Form.Control className="w-25" type="text" name="site_name" value={siteName} onChange={handleSiteChange} aria-label="Site Name" />
                         </Col>
                     </Row>
@@ -688,12 +713,31 @@ const Sidebar = ({ onDragStart }) => (
 
 // Form with the base information
 const BaseInfoForm = ({ formData, setFormData }) => {
+    const [timeStepError, setTimeStepError] = useState('');
+
     const handleChange = (e) => {
-        const { name, type, value, checked } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : value,
-        }));
+        const { name, value, type, checked } = e.target;
+        const val = type === 'checkbox' ? checked : value;
+
+        setFormData((prev) => {
+            const updated = { ...prev, [name]: val };
+
+            // Time step validation
+            const start = parseInt(updated.simulation_start_time_step, 10);
+            const end = parseInt(updated.simulation_end_time_step, 10);
+
+            if (!isNaN(start) && !isNaN(end)) {
+                if (start >= end) {
+                    setTimeStepError('"Start Time Step" must be less than "End Time Step"');
+                } else {
+                    setTimeStepError('');
+                }
+            } else {
+                setTimeStepError('');
+            }
+
+            return updated;
+        });
     };
 
     return (<>
@@ -716,31 +760,34 @@ const BaseInfoForm = ({ formData, setFormData }) => {
                 <Col className="mb-2" md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="simulation_start_time_step">Simulation Start Time Step</Form.Label>
-                        <Form.Control type="number" id="simulation_start_time_step" name="simulation_start_time_step" value={formData.simulation_start_time_step} onChange={handleChange} aria-label="Simulation Start Time Step" />
+                        <Form.Control isInvalid={timeStepError} type="number" id="simulation_start_time_step" name="simulation_start_time_step" value={formData.simulation_start_time_step} min={0} onChange={handleChange} aria-label="Simulation Start Time Step" />
                     </Form.Group>
+                    {timeStepError && (
+                        <p style={{ color: 'red', marginBottom: 0 }}>{timeStepError}</p>
+                    )}
                 </Col>
                 <Col className="mb-2" md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="simulation_end_time_step">Simulation End Time Step</Form.Label>
-                        <Form.Control type="number" id="simulation_end_time_step" name="simulation_end_time_step" value={formData.simulation_end_time_step} onChange={handleChange} aria-label="Simulation End Time Step" />
+                        <Form.Control isInvalid={timeStepError} type="number" id="simulation_end_time_step" name="simulation_end_time_step" value={formData.simulation_end_time_step} min={0} onChange={handleChange} aria-label="Simulation End Time Step" />
                     </Form.Group>
                 </Col>
 
                 <Col md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="episode_time_steps">Episode Time Steps</Form.Label>
-                        <Form.Control type="number" id="episode_time_steps" name="episode_time_steps" value={formData.episode_time_steps} onChange={handleChange} aria-label="Episode Time Steps" />
+                        <Form.Control type="number" id="episode_time_steps" name="episode_time_steps" value={formData.episode_time_steps} min={0} onChange={handleChange} aria-label="Episode Time Steps" />
                     </Form.Group>
                 </Col>
                 <Col md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="seconds_per_time_step">Seconds per Time Step</Form.Label>
-                        <Form.Control type="number" id="seconds_per_time_step" name="seconds_per_time_step" value={formData.seconds_per_time_step} onChange={handleChange} aria-label="Seconds Per Time Step" />
+                        <Form.Control type="number" id="seconds_per_time_step" name="seconds_per_time_step" value={formData.seconds_per_time_step} min={0} onChange={handleChange} aria-label="Seconds Per Time Step" />
                     </Form.Group>
                 </Col>
             </Row>
             <Row className="mt-3">
-                <Col md={4}>
+                <Col md={4} className="px-1">
                     <Form.Check className="mb-1 pl-0">
                         <Form.Check.Label>
                             <Form.Check.Input type="checkbox" name="central_agent" checked={formData.central_agent} onChange={handleChange} />
@@ -749,7 +796,7 @@ const BaseInfoForm = ({ formData, setFormData }) => {
                         </Form.Check.Label>
                     </Form.Check>
                 </Col>
-                <Col md={4}>
+                <Col md={4} className="px-1">
                     <Form.Check className="mb-1 pl-0">
                         <Form.Check.Label>
                             <Form.Check.Input type="checkbox" name="rolling_episode_split" checked={formData.rolling_episode_split} onChange={handleChange} />
@@ -758,7 +805,7 @@ const BaseInfoForm = ({ formData, setFormData }) => {
                         </Form.Check.Label>
                     </Form.Check>
                 </Col>
-                <Col md={4}>
+                <Col md={4} className="px-1">
                     <Form.Check className="mb-1 pl-0">
                         <Form.Check.Label>
                             <Form.Check.Input type="checkbox" name="random_episode_split" checked={formData.random_episode_split} onChange={handleChange} />
