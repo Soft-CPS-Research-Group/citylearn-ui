@@ -85,10 +85,9 @@ function Sidebar({ color, image, routes }) {
             href="https://github.com/Soft-CPS-Research-Group"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white mb-3"
+            className="text-white mb-3 btn"
             style={{ fontSize: '18px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
           >
-            <i className="nc-icon nc-bulb-63" /> {/* or any other NC icon you like */}
             Check out our GitHub!
           </a>
         </div>

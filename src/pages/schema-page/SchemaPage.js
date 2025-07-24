@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import CustomNode from "./CustomNode";
 
 export default function SchemaPage() {
+    const [validFormData, setValidFormData] = useState(false);
     const [valid, setValid] = useState(true);
 
     // Dataset Info
@@ -24,13 +25,6 @@ export default function SchemaPage() {
     const handleDatasetName = async (e) => {
         const dataset = e.target.value;
         setDatasetName(dataset);
-    };
-
-    const [siteList, setSiteList] = useState([]);
-    const [datasetSite, setDatasetSite] = useState("");
-    const handleDatasetSite = async (e) => {
-        const dataset = e.target.value;
-        setDatasetSite(dataset);
     };
 
     const [datasetPeriod, setDatasetPeriod] = useState(1);
@@ -45,11 +39,12 @@ export default function SchemaPage() {
         const value = e.target.value;
         setDateFrom(value);
 
-        if (dateUntil && new Date(value) >= new Date(dateUntil)) {
+        if (!value) {
+            setFromError('"From" date is required');
+        } else if (dateUntil && new Date(value) >= new Date(dateUntil)) {
             setFromError('"From" date must be earlier than "Until" date');
         } else {
             setFromError('');
-            setUntilError('');
         }
     };
 
@@ -59,11 +54,12 @@ export default function SchemaPage() {
         const value = e.target.value;
         setDateUntil(value);
 
-        if (dateFrom && new Date(value) <= new Date(dateFrom)) {
+        if (!value) {
+            setUntilError('"Until" date is required');
+        } else if (dateFrom && new Date(value) <= new Date(dateFrom)) {
             setUntilError('"Until" date must be later than "From" date');
         } else {
             setUntilError('');
-            setFromError('');
         }
     };
 
@@ -179,22 +175,9 @@ export default function SchemaPage() {
     }, [copiedNode, selectedNodes, setNodes]);
 
     useEffect(() => {
-        fetchData();
         document.addEventListener("keydown", handleKeyDown);
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [handleKeyDown]);
-
-    const fetchData = async () => {
-        try {
-            const res = await fetch("sites");
-            const json = await res.json();
-            if (json.sites) {
-                setSiteList(json.sites);
-            }
-        } catch (err) {
-            console.error("Fetch error:", err);
-        }
-    };
 
     const handleSaveSchema = async () => {
         if (!valid) {
@@ -233,14 +216,14 @@ export default function SchemaPage() {
 
         const body = {
             name: datasetName,
-            site_id: datasetSite,
+            site_id: siteName,
             citylearn_configs: configs,
             from_ts: dayjs(dateFrom).format("YYYY-MM-DD HH:mm:ss"),
             until_ts: dayjs(dateUntil).format("YYYY-MM-DD HH:mm:ss"),
         };
 
         const schema = {
-            dataset_info: body,
+            ...body,
             electric_vehicles_def: {},
             buildings: {}
         };
@@ -282,42 +265,36 @@ export default function SchemaPage() {
             }
         });
 
-        console.log(JSON.stringify(schema, null, 2));
 
-        // try {
-        //     const body = {
-        //         site: siteName,
-        //         schema: schema
-        //     };
+        try {
+            const json = JSON.stringify(schema, null, 2);
+            console.log(json);
 
-        //     const response = await fetch("schema/create", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify(body)
-        //     });
+            // Create a Blob from the JSON string
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'schema.json'; // File name
+            document.body.appendChild(a);
+            a.click();
 
-        //     if (response.ok) {
-        //         toast.success('Schema created successfully!', {
-        //             position: "top-right",
-        //             autoClose: 5000,
-        //             hideProgressBar: false
-        //         });
-        //     } else {
-        //         toast.error('Error creating schema!', {
-        //             position: "top-right",
-        //             autoClose: 5000,
-        //             hideProgressBar: false
-        //         });
-        //     }
-        // } catch (error) {
-        //     toast.error('Error creating schema!', {
-        //         position: "top-right",
-        //         autoClose: 5000,
-        //         hideProgressBar: false
-        //     });
-        // }
+            // Clean up
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            toast.success('Schema created successfully!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false
+            });
+        } catch (error) {
+            toast.error('Error creating schema!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false
+            });
+        }
     };
 
     const getConnectedDevices = (nodes, edges, buildingId) => {
@@ -551,7 +528,11 @@ export default function SchemaPage() {
             <Row>
                 <Col className="d-flex flex-row-reverse">
                     {!show && <Button variant="primary" onClick={() => setShow(true)}>New Schema</Button>}
-                    {show && <Button variant={siteName == "" || datasetName == "" ? "secondary" : "primary"} onClick={handleSaveSchema} disabled={siteName == "" || datasetName == ""}>Save Schema</Button>}
+                    {show &&
+                        <Button variant={!validFormData || siteName == "" || datasetName == "" ? "secondary" : "primary"}
+                            onClick={handleSaveSchema} disabled={!validFormData || siteName == "" || datasetName == ""}>Save Schema
+                        </Button>
+                    }
                     {show && <Button variant="danger" style={{ marginRight: 15 }} onClick={() => setShow(false)}>Cancel</Button>}
                 </Col>
                 <ToastContainer />
@@ -569,29 +550,9 @@ export default function SchemaPage() {
                             </h4>
                             <Form.Control type="text" name="name" value={datasetName} onChange={handleDatasetName} aria-label="Dataset Name" />
                         </Col>
-                        <Col md={3}>
-                            <h4>
-                                Site
-                                <OverlayTrigger placement="top" overlay={<Tooltip>Schema used for the dataset</Tooltip>}>
-                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
-                                </OverlayTrigger>
-                            </h4>
-                            <Form.Select style={{
-                                padding: "10px",
-                                cursor: "pointer",
-                                border: "1px solid #ccc",
-                                borderRadius: "5px",
-                                width: "100%",
-                                textAlign: "left"
-                            }} value={datasetSite} onChange={handleDatasetSite} aria-label="Dataset Site">
-                                {siteList.map((site) => (
-                                    <option key={site} value={site}>{site}</option>
-                                ))}
-                            </Form.Select>
-                        </Col>
                     </Row>
 
-                    <BaseInfoForm formData={formData} setFormData={setFormData} />
+                    <BaseInfoForm formData={formData} setFormData={setFormData} setValidFormData={setValidFormData} />
 
                     <Row>
                         <Col md={6}>
@@ -647,7 +608,7 @@ export default function SchemaPage() {
                     <Row>
                         <Col>
                             <h4>
-                                Site Name
+                                Schema Name
                                 <OverlayTrigger placement="top" overlay={<Tooltip>Name of the schema</Tooltip>}>
                                     <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
                                 </OverlayTrigger>
@@ -655,6 +616,7 @@ export default function SchemaPage() {
                             <Form.Control className="w-25" type="text" name="site_name" value={siteName} onChange={handleSiteChange} aria-label="Site Name" />
                         </Col>
                     </Row>
+
                     <h4>Schema Info</h4>
                     <div style={{ display: "flex", paddingTop: 10, height: "80vh" }}>
                         <Sidebar onDragStart={onDragStart} />
@@ -712,8 +674,8 @@ const Sidebar = ({ onDragStart }) => (
 );
 
 // Form with the base information
-const BaseInfoForm = ({ formData, setFormData }) => {
-    const [timeStepError, setTimeStepError] = useState('');
+const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -721,21 +683,44 @@ const BaseInfoForm = ({ formData, setFormData }) => {
 
         setFormData((prev) => {
             const updated = { ...prev, [name]: val };
+            const newErrors = { ...errors };
 
-            // Time step validation
-            const start = parseInt(updated.simulation_start_time_step, 10);
-            const end = parseInt(updated.simulation_end_time_step, 10);
+            // Required field validation
+            const requiredFields = [
+                'random_seed',
+                'root_directory',
+                'simulation_start_time_step',
+                'simulation_end_time_step',
+                'episode_time_steps',
+                'seconds_per_time_step'
+            ];
 
-            if (!isNaN(start) && !isNaN(end)) {
-                if (start >= end) {
-                    setTimeStepError('"Start Time Step" must be less than "End Time Step"');
+            if (requiredFields.includes(name)) {
+                if (val === '' || val === null) {
+                    newErrors[name] = 'This field is required';
                 } else {
-                    setTimeStepError('');
+                    delete newErrors[name];
                 }
-            } else {
-                setTimeStepError('');
             }
 
+            // Simulation time step validation
+            const start = parseInt(updated.simulation_start_time_step);
+            const end = parseInt(updated.simulation_end_time_step);
+            if (!isNaN(start) && !isNaN(end)) {
+                if (start >= end) {
+                    newErrors.simulation_time_step = '"Start Time Step" must be less than "End Time Step"';
+                } else {
+                    delete newErrors.simulation_time_step;
+                }
+            }
+
+            if (Object.keys(newErrors).length === 0) {
+                setValidFormData(true);
+            } else {
+                setValidFormData(false);
+            }
+
+            setErrors(newErrors);
             return updated;
         });
     };
@@ -747,42 +732,98 @@ const BaseInfoForm = ({ formData, setFormData }) => {
                 <Col className="mb-2" md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="random_seed">Random Seed</Form.Label>
-                        <Form.Control type="number" id="random_seed" name="random_seed" value={formData.random_seed} onChange={handleChange} aria-label="Random Seed" />
+                        <Form.Control
+                            type="number"
+                            id="random_seed"
+                            name="random_seed"
+                            value={formData.random_seed}
+                            onChange={handleChange}
+                            isInvalid={!!errors.random_seed}
+                        />
+                        <Form.Control.Feedback type="invalid">{errors.random_seed}</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
+
                 <Col className="mb-2" md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="root_directory">Root Directory</Form.Label>
-                        <Form.Control type="text" id="root_directory" name="root_directory" value={formData.root_directory} onChange={handleChange} aria-label="Root Directory" />
+                        <Form.Control
+                            type="text"
+                            id="root_directory"
+                            name="root_directory"
+                            value={formData.root_directory}
+                            onChange={handleChange}
+                            isInvalid={!!errors.root_directory}
+                        />
+                        <Form.Control.Feedback type="invalid">{errors.root_directory}</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
 
                 <Col className="mb-2" md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="simulation_start_time_step">Simulation Start Time Step</Form.Label>
-                        <Form.Control isInvalid={timeStepError} type="number" id="simulation_start_time_step" name="simulation_start_time_step" value={formData.simulation_start_time_step} min={0} onChange={handleChange} aria-label="Simulation Start Time Step" />
+                        <Form.Control
+                            type="number"
+                            id="simulation_start_time_step"
+                            name="simulation_start_time_step"
+                            value={formData.simulation_start_time_step}
+                            onChange={handleChange}
+                            min={0}
+                            isInvalid={!!errors.simulation_start_time_step || !!errors.simulation_time_step}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors.simulation_start_time_step || errors.simulation_time_step}
+                        </Form.Control.Feedback>
                     </Form.Group>
-                    {timeStepError && (
-                        <p style={{ color: 'red', marginBottom: 0 }}>{timeStepError}</p>
-                    )}
                 </Col>
+
                 <Col className="mb-2" md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="simulation_end_time_step">Simulation End Time Step</Form.Label>
-                        <Form.Control isInvalid={timeStepError} type="number" id="simulation_end_time_step" name="simulation_end_time_step" value={formData.simulation_end_time_step} min={0} onChange={handleChange} aria-label="Simulation End Time Step" />
+                        <Form.Control
+                            type="number"
+                            id="simulation_end_time_step"
+                            name="simulation_end_time_step"
+                            value={formData.simulation_end_time_step}
+                            onChange={handleChange}
+                            min={0}
+                            isInvalid={!!errors.simulation_end_time_step || !!errors.simulation_time_step}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors.simulation_end_time_step || errors.simulation_time_step}
+                        </Form.Control.Feedback>
                     </Form.Group>
                 </Col>
 
                 <Col md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="episode_time_steps">Episode Time Steps</Form.Label>
-                        <Form.Control type="number" id="episode_time_steps" name="episode_time_steps" value={formData.episode_time_steps} min={0} onChange={handleChange} aria-label="Episode Time Steps" />
+                        <Form.Control
+                            type="number"
+                            id="episode_time_steps"
+                            name="episode_time_steps"
+                            value={formData.episode_time_steps}
+                            onChange={handleChange}
+                            min={0}
+                            isInvalid={!!errors.episode_time_steps}
+                        />
+                        <Form.Control.Feedback type="invalid">{errors.episode_time_steps}</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
+
                 <Col md={6}>
                     <Form.Group>
                         <Form.Label htmlFor="seconds_per_time_step">Seconds per Time Step</Form.Label>
-                        <Form.Control type="number" id="seconds_per_time_step" name="seconds_per_time_step" value={formData.seconds_per_time_step} min={0} onChange={handleChange} aria-label="Seconds Per Time Step" />
+                        <Form.Control
+                            type="number"
+                            id="seconds_per_time_step"
+                            name="seconds_per_time_step"
+                            value={formData.seconds_per_time_step}
+                            onChange={handleChange}
+                            min={0}
+                            isInvalid={!!errors.seconds_per_time_step}
+                        />
+                        <Form.Control.Feedback type="invalid">{errors.seconds_per_time_step}</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
             </Row>
