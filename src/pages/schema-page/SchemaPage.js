@@ -18,49 +18,13 @@ import CustomNode from "./CustomNode";
 
 export default function SchemaPage() {
     const [validFormData, setValidFormData] = useState(false);
-    const [valid, setValid] = useState(true);
+    const [validJSONConfig, setValidJSONConfig] = useState(true);
 
     // Dataset Info
     const [datasetName, setDatasetName] = useState("");
     const handleDatasetName = async (e) => {
         const dataset = e.target.value;
         setDatasetName(dataset);
-    };
-
-    const [datasetPeriod, setDatasetPeriod] = useState(1);
-    const handleDatasetPeriod = async (e) => {
-        const dataset = e.target.value;
-        setDatasetPeriod(dataset);
-    };
-
-    const [dateFrom, setDateFrom] = useState("");
-    const [fromError, setFromError] = useState('');
-    const handleDateFrom = async (e) => {
-        const value = e.target.value;
-        setDateFrom(value);
-
-        if (!value) {
-            setFromError('"From" date is required');
-        } else if (dateUntil && new Date(value) >= new Date(dateUntil)) {
-            setFromError('"From" date must be earlier than "Until" date');
-        } else {
-            setFromError('');
-        }
-    };
-
-    const [dateUntil, setDateUntil] = useState("");
-    const [untilError, setUntilError] = useState('');
-    const handleDateUntil = async (e) => {
-        const value = e.target.value;
-        setDateUntil(value);
-
-        if (!value) {
-            setUntilError('"Until" date is required');
-        } else if (dateFrom && new Date(value) <= new Date(dateFrom)) {
-            setUntilError('"Until" date must be later than "From" date');
-        } else {
-            setUntilError('');
-        }
     };
 
     const [formData, setFormData] = useState({
@@ -73,6 +37,9 @@ export default function SchemaPage() {
         rolling_episode_split: false,
         random_episode_split: false,
         seconds_per_time_step: 3600,
+        period: 0,
+        date_from: "",
+        date_until: ""
     });
 
     const [rewardFunctionData, setRewardFunctionData] = useState({ type: "", attributes: {} });
@@ -180,10 +147,6 @@ export default function SchemaPage() {
     }, [handleKeyDown]);
 
     const handleSaveSchema = async () => {
-        if (!valid) {
-            alert("Invalid form data!");
-        }
-
         const filteredFormData = Object.fromEntries(
             Object.entries(formData).map(([key, value]) => {
                 if (typeof value === "boolean") return [key, value];
@@ -218,8 +181,8 @@ export default function SchemaPage() {
             name: datasetName,
             site_id: siteName,
             citylearn_configs: configs,
-            from_ts: dayjs(dateFrom).format("YYYY-MM-DD HH:mm:ss"),
-            until_ts: dayjs(dateUntil).format("YYYY-MM-DD HH:mm:ss"),
+            from_ts: dayjs(formData.date_from).format("YYYY-MM-DD HH:mm:ss"),
+            until_ts: dayjs(formData.date_until).format("YYYY-MM-DD HH:mm:ss"),
         };
 
         const schema = {
@@ -529,8 +492,8 @@ export default function SchemaPage() {
                 <Col className="d-flex flex-row-reverse">
                     {!show && <Button variant="primary" onClick={() => setShow(true)}>New Schema</Button>}
                     {show &&
-                        <Button variant={!validFormData || siteName == "" || datasetName == "" ? "secondary" : "primary"}
-                            onClick={handleSaveSchema} disabled={!validFormData || siteName == "" || datasetName == ""}>Save Schema
+                        <Button variant={!validJSONConfig || !validFormData || siteName == "" || datasetName == "" ? "secondary" : "primary"}
+                            onClick={handleSaveSchema} disabled={!validJSONConfig || !validFormData || siteName == "" || datasetName == ""}>Save Schema
                         </Button>
                     }
                     {show && <Button variant="danger" style={{ marginRight: 15 }} onClick={() => setShow(false)}>Cancel</Button>}
@@ -541,7 +504,7 @@ export default function SchemaPage() {
             {show && (
                 <>
                     <Row>
-                        <Col md={6}>
+                        <Col md={3}>
                             <h4>
                                 Dataset Name
                                 <OverlayTrigger placement="top" overlay={<Tooltip>Name of the dataset</Tooltip>}>
@@ -565,45 +528,9 @@ export default function SchemaPage() {
                         </Col>
                     </Row>
 
-                    <AgentForm onChange={handleAgentChange} setValid={setValid} />
+                    <AgentForm onChange={handleAgentChange} setValidJSONConfig={setValidJSONConfig} />
 
                     <RewardFunctionForm onChange={handleRewardFunctionChange} />
-
-                    <Row>
-                        <Col md={4}>
-                            <h4>
-                                Period
-                                <OverlayTrigger placement="top" overlay={<Tooltip>Interval between time steps (in minutes)</Tooltip>}>
-                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
-                                </OverlayTrigger>
-                            </h4>
-                            <Form.Control type="number" name="period" min={1} value={datasetPeriod} onChange={handleDatasetPeriod} aria-label="Period" />
-                        </Col>
-                        <Col md={4}>
-                            <h4>
-                                From
-                                <OverlayTrigger placement="top" overlay={<Tooltip>Start date of the period</Tooltip>}>
-                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
-                                </OverlayTrigger>
-                            </h4>
-                            <Form.Control type="datetime-local" name="from" value={dateFrom} onChange={handleDateFrom} aria-label="From" isInvalid={fromError} />
-                            {fromError && (
-                                <p style={{ color: 'red' }}>{fromError}</p>
-                            )}
-                        </Col>
-                        <Col md={4}>
-                            <h4>
-                                Until
-                                <OverlayTrigger placement="top" overlay={<Tooltip>End date of the period</Tooltip>}>
-                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
-                                </OverlayTrigger>
-                            </h4>
-                            <Form.Control type="datetime-local" name="until" value={dateUntil} onChange={handleDateUntil} aria-label="Until" isInvalid={untilError} />
-                            {untilError && (
-                                <p style={{ color: 'red' }}>{untilError}</p>
-                            )}
-                        </Col>
-                    </Row>
 
                     <Row>
                         <Col>
@@ -634,96 +561,53 @@ export default function SchemaPage() {
     );
 }
 
-// Sidebar for dragging elements
-const Sidebar = ({ onDragStart }) => (
-    <div style={{ width: 200, paddingRight: 10, background: "#f4f4f4" }}>
-        <div draggable onDragStart={(e) => onDragStart(e, "building")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaBuilding /> Building
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "ev")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaCar /> Electric Vehicle
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "charger")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaPlug /> Charger
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "pv")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaBolt /> PV
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "cooling_device")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaSnowflake /> Cooling Device
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "heating_device")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaFireAlt /> Heating Device
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "dhw_device")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaFireAlt /> DHW Device
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "dhw_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaBox /> DHW Storage
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "cooling_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaBox /> Cooling Storage
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "heating_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaBox /> Heating Storage
-        </div>
-        <div draggable onDragStart={(e) => onDragStart(e, "electrical_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
-            <FaBox /> Electrical Storage
-        </div>
-    </div>
-);
-
 // Form with the base information
 const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
     const [errors, setErrors] = useState({});
+    const requiredFields = [
+        'random_seed',
+        'root_directory',
+        'simulation_start_time_step',
+        'simulation_end_time_step',
+        'episode_time_steps',
+        'seconds_per_time_step',
+        'period',
+        'date_from',
+        'date_until'
+    ];
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         const val = type === 'checkbox' ? checked : value;
 
-        setFormData((prev) => {
-            const updated = { ...prev, [name]: val };
-            const newErrors = { ...errors };
-
-            // Required field validation
-            const requiredFields = [
-                'random_seed',
-                'root_directory',
-                'simulation_start_time_step',
-                'simulation_end_time_step',
-                'episode_time_steps',
-                'seconds_per_time_step'
-            ];
-
-            if (requiredFields.includes(name)) {
-                if (val === '' || val === null) {
-                    newErrors[name] = 'This field is required';
-                } else {
-                    delete newErrors[name];
-                }
-            }
-
-            // Simulation time step validation
-            const start = parseInt(updated.simulation_start_time_step);
-            const end = parseInt(updated.simulation_end_time_step);
-            if (!isNaN(start) && !isNaN(end)) {
-                if (start >= end) {
-                    newErrors.simulation_time_step = '"Start Time Step" must be less than "End Time Step"';
-                } else {
-                    delete newErrors.simulation_time_step;
-                }
-            }
-
-            if (Object.keys(newErrors).length === 0) {
-                setValidFormData(true);
-            } else {
-                setValidFormData(false);
-            }
-
-            setErrors(newErrors);
-            return updated;
-        });
+        setFormData((prev) => ({ ...prev, [name]: val }));
     };
+
+    // Re-run validation whenever formData changes
+    useEffect(() => {
+        const newErrors = {};
+
+        requiredFields.forEach((field) => {
+            if (formData[field] === '' || formData[field] === null) {
+                newErrors[field] = 'This field is required';
+            }
+        });
+
+        const start = parseInt(formData.simulation_start_time_step);
+        const end = parseInt(formData.simulation_end_time_step);
+        if (!isNaN(start) && !isNaN(end) && start >= end) {
+            newErrors.simulation_time_step = '"Start Time Step" must be less than "End Time Step"';
+        }
+
+        const from = new Date(formData.date_from);
+        const until = new Date(formData.date_until);
+        if (from && until && from > until) {
+            newErrors.date_from = '"From" date must be earlier than "Until" date';
+        }
+
+        setErrors(newErrors);
+        setValidFormData(Object.keys(newErrors).length === 0);
+    }, [formData, setValidFormData]);
 
     return (<>
         <Form className="mt-3">
@@ -736,9 +620,11 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                             type="number"
                             id="random_seed"
                             name="random_seed"
+                            min={0}
+                            max={9999999}
                             value={formData.random_seed}
                             onChange={handleChange}
-                            isInvalid={!!errors.random_seed}
+                            isInvalid={errors.random_seed}
                         />
                         <Form.Control.Feedback type="invalid">{errors.random_seed}</Form.Control.Feedback>
                     </Form.Group>
@@ -753,7 +639,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                             name="root_directory"
                             value={formData.root_directory}
                             onChange={handleChange}
-                            isInvalid={!!errors.root_directory}
+                            isInvalid={errors.root_directory}
                         />
                         <Form.Control.Feedback type="invalid">{errors.root_directory}</Form.Control.Feedback>
                     </Form.Group>
@@ -769,7 +655,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                             value={formData.simulation_start_time_step}
                             onChange={handleChange}
                             min={0}
-                            isInvalid={!!errors.simulation_start_time_step || !!errors.simulation_time_step}
+                            isInvalid={errors.simulation_start_time_step || errors.simulation_time_step}
                         />
                         <Form.Control.Feedback type="invalid">
                             {errors.simulation_start_time_step || errors.simulation_time_step}
@@ -787,7 +673,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                             value={formData.simulation_end_time_step}
                             onChange={handleChange}
                             min={0}
-                            isInvalid={!!errors.simulation_end_time_step || !!errors.simulation_time_step}
+                            isInvalid={errors.simulation_end_time_step || errors.simulation_time_step}
                         />
                         <Form.Control.Feedback type="invalid">
                             {errors.simulation_end_time_step || errors.simulation_time_step}
@@ -795,7 +681,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                     </Form.Group>
                 </Col>
 
-                <Col md={6}>
+                <Col md={6} className="mb-2">
                     <Form.Group>
                         <Form.Label htmlFor="episode_time_steps">Episode Time Steps</Form.Label>
                         <Form.Control
@@ -805,13 +691,13 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                             value={formData.episode_time_steps}
                             onChange={handleChange}
                             min={0}
-                            isInvalid={!!errors.episode_time_steps}
+                            isInvalid={errors.episode_time_steps}
                         />
                         <Form.Control.Feedback type="invalid">{errors.episode_time_steps}</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
 
-                <Col md={6}>
+                <Col md={6} className="mb-2">
                     <Form.Group>
                         <Form.Label htmlFor="seconds_per_time_step">Seconds per Time Step</Form.Label>
                         <Form.Control
@@ -821,12 +707,67 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                             value={formData.seconds_per_time_step}
                             onChange={handleChange}
                             min={0}
-                            isInvalid={!!errors.seconds_per_time_step}
+                            isInvalid={errors.seconds_per_time_step}
                         />
                         <Form.Control.Feedback type="invalid">{errors.seconds_per_time_step}</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
             </Row>
+
+            <Row>
+                <Col md={4}>
+                    <Form.Group>
+                        <Form.Label htmlFor="period">
+                            Period
+                            <OverlayTrigger placement="top" overlay={<Tooltip>Interval between time steps (in minutes)</Tooltip>}>
+                                <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                            </OverlayTrigger>
+                        </Form.Label>
+                        <Form.Control
+                            type="number"
+                            name="period"
+                            min={1}
+                            value={formData.period}
+                            onChange={handleChange}
+                            isInvalid={errors.period}
+                            aria-label="Period" />
+                        <Form.Control.Feedback type="invalid">{errors.period}</Form.Control.Feedback>
+                    </Form.Group>
+                </Col>
+                <Col md={4}>
+                    <Form.Label htmlFor="date_from">
+                        From
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Start date of the period</Tooltip>}>
+                            <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                        </OverlayTrigger>
+                    </Form.Label>
+                    <Form.Control
+                        type="datetime-local"
+                        name="date_from"
+                        value={formData.date_from}
+                        onChange={handleChange}
+                        aria-label="From"
+                        isInvalid={errors.date_from} />
+                    <Form.Control.Feedback type="invalid">{errors.date_from}</Form.Control.Feedback>
+                </Col>
+                <Col md={4}>
+                    <Form.Label htmlFor="date_until">
+                        Until
+                        <OverlayTrigger placement="top" overlay={<Tooltip>End date of the period</Tooltip>}>
+                            <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                        </OverlayTrigger>
+                    </Form.Label>
+                    <Form.Control
+                        type="datetime-local"
+                        name="date_until"
+                        value={formData.date_until}
+                        onChange={handleChange}
+                        aria-label="Until"
+                        isInvalid={errors.date_until} />
+                    <Form.Control.Feedback type="invalid">{errors.date_until}</Form.Control.Feedback>
+                </Col>
+            </Row>
+
             <Row className="mt-3">
                 <Col md={4} className="px-1">
                     <Form.Check className="mb-1 pl-0">
@@ -872,7 +813,7 @@ const agentTypes = [
     "citylearn.agents.marlisa.MARLISA",
     "citylearn.agents.marlisa.MARLISARBC",
 ];
-const AgentForm = ({ onChange, setValid, initialType = agentTypes[0] }) => {
+const AgentForm = ({ onChange, setValidJSONConfig, initialType = agentTypes[0] }) => {
     const [selectedType, setSelectedType] = useState(initialType);
     const [jsonAttributes, setJsonAttributes] = useState({});
     const [jsonText, setJsonText] = useState("");
@@ -892,6 +833,17 @@ const AgentForm = ({ onChange, setValid, initialType = agentTypes[0] }) => {
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
 
+        // Validate if file is .json
+        if (file && file.type !== "application/json" && !file.name.endsWith(".json")) {
+            toast.error('Only .json files are allowed!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false
+            });
+            event.target.value = "";
+            return;
+        }
+
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -902,10 +854,10 @@ const AgentForm = ({ onChange, setValid, initialType = agentTypes[0] }) => {
                     setIsValidJson(true);
 
                     // Pass updated agent data to parent
-                    setValid(true);
+                    setValidJSONConfig(true);
                     onChange({ type: selectedType, attributes: jsonData });
                 } catch (error) {
-                    setValid(false);
+                    setValidJSONConfig(false);
                 }
             };
             reader.readAsText(file);
@@ -923,11 +875,11 @@ const AgentForm = ({ onChange, setValid, initialType = agentTypes[0] }) => {
             setIsValidJson(true);
 
             // Pass updated JSON to parent
-            setValid(true);
+            setValidJSONConfig(true);
             onChange({ type: selectedType, attributes: updatedJson });
         } catch (error) {
             setIsValidJson(false);
-            setValid(false);
+            setValidJSONConfig(false);
         }
     };
 
@@ -962,7 +914,12 @@ const AgentForm = ({ onChange, setValid, initialType = agentTypes[0] }) => {
 
                     <Col md={6}>
                         <Form.Group>
-                            <Form.Label htmlFor="agent_config">Agent Config (.json)</Form.Label>
+                            <Form.Label htmlFor="agent_config">
+                                Agent Config (.json)
+                                <OverlayTrigger placement="top" overlay={<Tooltip>Custom configurations for the agent. File must be in JSON format</Tooltip>}>
+                                    <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
+                                </OverlayTrigger>
+                            </Form.Label>
                             <input
                                 type="file"
                                 accept=".json"
@@ -1186,3 +1143,42 @@ const Selector = ({ name, options, setOptions }) => {
         </div>
     );
 };
+
+// Sidebar for dragging elements
+const Sidebar = ({ onDragStart }) => (
+    <div style={{ width: 200, paddingRight: 10, background: "#f4f4f4" }}>
+        <div draggable onDragStart={(e) => onDragStart(e, "building")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaBuilding /> Building
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "ev")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaCar /> Electric Vehicle
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "charger")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaPlug /> Charger
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "pv")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaBolt /> PV
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "cooling_device")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaSnowflake /> Cooling Device
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "heating_device")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaFireAlt /> Heating Device
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "dhw_device")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaFireAlt /> DHW Device
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "dhw_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaBox /> DHW Storage
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "cooling_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaBox /> Cooling Storage
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "heating_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaBox /> Heating Storage
+        </div>
+        <div draggable onDragStart={(e) => onDragStart(e, "electrical_storage")} style={{ padding: 10, background: "#ddd", marginBottom: 10, cursor: "grab", display: "flex", alignItems: "center", gap: "5px" }}>
+            <FaBox /> Electrical Storage
+        </div>
+    </div>
+);

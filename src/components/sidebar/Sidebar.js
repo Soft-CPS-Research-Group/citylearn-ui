@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React, { useEffect, Component } from "react";
 import { useLocation, NavLink } from "react-router-dom";
 
 import { Nav } from "react-bootstrap";
@@ -26,6 +26,19 @@ function Sidebar({ color, image, routes }) {
   const activeRoute = (routeName) => {
     return location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
+
+  // 💡 Set page title based on current route
+  useEffect(() => {
+    const currentRoute = routes.find((route) =>
+      location.pathname.includes(route.layout + route.path)
+    );
+
+    if (currentRoute && currentRoute.name) {
+      document.title = `CityLearn | ${currentRoute.name}`;
+    } else {
+      document.title = "CityLearn";
+    }
+  }, [location.pathname, routes]);
 
   // Group routes by userType
   const groupedRoutes = routes.reduce((acc, route) => {
