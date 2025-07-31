@@ -29,7 +29,7 @@ export default function SchemaPage() {
 
     const [formData, setFormData] = useState({
         random_seed: 2022,
-        root_directory: "",
+        root_directory: "/",
         central_agent: false,
         simulation_start_time_step: 0,
         simulation_end_time_step: 8759,
@@ -38,8 +38,8 @@ export default function SchemaPage() {
         random_episode_split: false,
         seconds_per_time_step: 3600,
         period: 0,
-        date_from: "",
-        date_until: ""
+        date_from: "2025-07-15T00:00",
+        date_until: "2025-07-22T23:59"
     });
 
     const [rewardFunctionData, setRewardFunctionData] = useState({ type: "", attributes: {} });
@@ -506,7 +506,7 @@ export default function SchemaPage() {
                     <Row>
                         <Col md={3}>
                             <h4>
-                                Dataset Name
+                                Dataset Name <span style={{ color: 'red' }}>*</span>
                                 <OverlayTrigger placement="top" overlay={<Tooltip>Name of the dataset</Tooltip>}>
                                     <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
                                 </OverlayTrigger>
@@ -535,7 +535,7 @@ export default function SchemaPage() {
                     <Row>
                         <Col>
                             <h4>
-                                Schema Name
+                                Schema Name <span style={{ color: 'red' }}>*</span>
                                 <OverlayTrigger placement="top" overlay={<Tooltip>Name of the schema</Tooltip>}>
                                     <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
                                 </OverlayTrigger>
@@ -615,7 +615,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
             <Row>
                 <Col className="mb-2" md={6}>
                     <Form.Group>
-                        <Form.Label htmlFor="random_seed">Random Seed</Form.Label>
+                        <Form.Label htmlFor="random_seed">Random Seed <span style={{ color: 'red' }}>*</span></Form.Label>
                         <Form.Control
                             type="number"
                             id="random_seed"
@@ -632,7 +632,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
 
                 <Col className="mb-2" md={6}>
                     <Form.Group>
-                        <Form.Label htmlFor="root_directory">Root Directory</Form.Label>
+                        <Form.Label htmlFor="root_directory">Root Directory <span style={{ color: 'red' }}>*</span></Form.Label>
                         <Form.Control
                             type="text"
                             id="root_directory"
@@ -647,7 +647,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
 
                 <Col className="mb-2" md={6}>
                     <Form.Group>
-                        <Form.Label htmlFor="simulation_start_time_step">Simulation Start Time Step</Form.Label>
+                        <Form.Label htmlFor="simulation_start_time_step">Simulation Start Time Step <span style={{ color: 'red' }}>*</span></Form.Label>
                         <Form.Control
                             type="number"
                             id="simulation_start_time_step"
@@ -665,7 +665,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
 
                 <Col className="mb-2" md={6}>
                     <Form.Group>
-                        <Form.Label htmlFor="simulation_end_time_step">Simulation End Time Step</Form.Label>
+                        <Form.Label htmlFor="simulation_end_time_step">Simulation End Time Step <span style={{ color: 'red' }}>*</span></Form.Label>
                         <Form.Control
                             type="number"
                             id="simulation_end_time_step"
@@ -683,7 +683,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
 
                 <Col md={6} className="mb-2">
                     <Form.Group>
-                        <Form.Label htmlFor="episode_time_steps">Episode Time Steps</Form.Label>
+                        <Form.Label htmlFor="episode_time_steps">Episode Time Steps <span style={{ color: 'red' }}>*</span></Form.Label>
                         <Form.Control
                             type="number"
                             id="episode_time_steps"
@@ -699,7 +699,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
 
                 <Col md={6} className="mb-2">
                     <Form.Group>
-                        <Form.Label htmlFor="seconds_per_time_step">Seconds per Time Step</Form.Label>
+                        <Form.Label htmlFor="seconds_per_time_step">Seconds per Time Step <span style={{ color: 'red' }}>*</span></Form.Label>
                         <Form.Control
                             type="number"
                             id="seconds_per_time_step"
@@ -718,7 +718,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                 <Col md={4}>
                     <Form.Group>
                         <Form.Label htmlFor="period">
-                            Period
+                            Period <span style={{ color: 'red' }}>*</span>
                             <OverlayTrigger placement="top" overlay={<Tooltip>Interval between time steps (in minutes)</Tooltip>}>
                                 <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
                             </OverlayTrigger>
@@ -736,7 +736,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                 </Col>
                 <Col md={4}>
                     <Form.Label htmlFor="date_from">
-                        From
+                        From <span style={{ color: 'red' }}>*</span>
                         <OverlayTrigger placement="top" overlay={<Tooltip>Start date of the period</Tooltip>}>
                             <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
                         </OverlayTrigger>
@@ -752,7 +752,7 @@ const BaseInfoForm = ({ formData, setFormData, setValidFormData }) => {
                 </Col>
                 <Col md={4}>
                     <Form.Label htmlFor="date_until">
-                        Until
+                        Until <span style={{ color: 'red' }}>*</span>
                         <OverlayTrigger placement="top" overlay={<Tooltip>End date of the period</Tooltip>}>
                             <i className="nc-icon nc-bulb-63" style={{ cursor: 'pointer', fontSize: '20px', marginLeft: '5px' }}></i>
                         </OverlayTrigger>

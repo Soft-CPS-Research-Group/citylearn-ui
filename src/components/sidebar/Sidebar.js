@@ -66,7 +66,7 @@ function Sidebar({ color, image, routes }) {
           {Object.entries(groupedRoutes).map(([userType, userRoutes], index) => (
             <React.Fragment key={index}>
               {userRoutes.map((prop, key) => {
-                if (!prop.redirect) {
+                if (!prop.redirect && prop.name != "Help") {
                   return (
                     <li
                       className={

@@ -16,7 +16,7 @@
 
 */
 import React, { Component } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom";
 import { Navbar, Container, Nav, Dropdown, Button } from "react-bootstrap";
 
 import routes from "routes.js";
@@ -59,6 +59,13 @@ function Header() {
             <h1 className="m-1" style={{ fontSize: '20px' }}>{getBrandText()}</h1>
           </Navbar.Text>
         </div>
+        <NavLink
+          to={"/admin/help"}
+          className="nav-link"
+          activeClassName="active"
+        >
+          <i className="nc-icon nc-bulb-63" style={{marginRight: "5px"}}></i>Help
+        </NavLink>
         {/* <Navbar.Toggle aria-controls="basic-navbar-nav" className="mr-2">
           <span className="navbar-toggler-bar burger-lines"></span>
           <span className="navbar-toggler-bar burger-lines"></span>

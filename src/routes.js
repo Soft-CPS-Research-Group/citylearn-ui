@@ -16,6 +16,7 @@
 
 */
 import RecDashboard from "pages/dashboard-page/RecDashboard.js";
+import HelpPage from "pages/help-page/HelpPage";
 import KPIs from "pages/kpis-page/KPIs.js";
 import SchemaPage from "pages/schema-page/SchemaPage.js";
 
@@ -39,6 +40,13 @@ const dashboardRoutes = [
     name: "Create Schema",
     icon: "nc-icon nc-puzzle-10",
     component: SchemaPage,
+    layout: "/admin"
+  },
+  {
+    path: "/help",
+    name: "Help",
+    icon: "nc-icon nc-puzzle-10",
+    component: HelpPage,
     layout: "/admin"
   }
 ];
