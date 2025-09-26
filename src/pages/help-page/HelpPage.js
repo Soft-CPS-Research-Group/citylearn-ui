@@ -34,20 +34,83 @@ function HelpPage() {
                 <section className="mb-10">
                     <h2 className="text-2xl font-semibold mb-2">Exporting Data From CityLearn into CityLearn UI</h2>
                     <p>
-                        To use this UI, your simulation results must be exported in a specific folder structure and naming format.
-                        You can use citylearn to generate these files.
+                        CityLearn automatically exports the folder structure expected by the UI. There are three workflows to consider:
                     </p>
-                    <p>
-                        The system uses the <code>render()</code> method, part of the OpenAI Gym interface, to automatically export data at each simulation
-                        step. This method loops through all elements of the environment—buildings, electric vehicles, batteries, chargers, etc.—collecting
-                        their states and the data they contain through calls to as_dict methods. The render method then saves the data to disk in CSV files
-                        organized by entity. Each row represents a time instant, and the columns contain the values of variables
-                        (such as energy consumption or state of charge), with units included in the column name.
+                    <ul className="list-disc list-inside mb-4">
+                        <li>
+                            <code>render=False</code> (default): no CSVs are produced, so the UI
+                            cannot ingest data.
+                        </li>
+                        <li>
+                            <code>render=True</code>: data is exported every simulation step into timestamped folders. You may keep the default location
+                            (<code>&lt;project&gt;/render_logs/&lt;timestamp&gt;</code>) or set <code>render_directory</code>/<code>render_directory_name</code> on :class: <code>citylearn.citylearn.CityLearnEnv</code> to choose the destination.
+                        </li>
+                        <li>
+                            <code>render=False</code> with explicit export: keep rendering off for
+                            faster runs and call :meth: <code>citylearn.citylearn.CityLearnEnv.export_final_kpis</code> (or a custom
+                            exporter) at the end. This lazily creates the render folder and writes
+                            the same CSV layout required by the UI.
+                        </li>
+                    </ul>
+
+                    <h3 className="text-xl font-semibold mt-6 mb-2">Render-on Example</h3>
+                    <pre className="p-1 rounded-lg overflow-x-auto text-sm">
+                        <code>{`from pathlib import Path
+from citylearn.citylearn import CityLearnEnv
+
+schema = 'data/datasets/citylearn_challenge_2022_phase_all_plus_evs/schema.json'
+
+env = CityLearnEnv(
+    schema,
+    central_agent=True,
+    episode_time_steps=48,
+    render=True,
+    render_directory=Path('outputs/ui_exports'), # optional custom base folder
+)
+
+observations, _ = env.reset()
+while not env.terminated:
+    actions = [env.action_space[0].sample()]
+    observations, reward, terminated, truncated, info = env.step(actions)`}
+                        </code>
+                    </pre>
+                    <p className="mt-2">
+                        The code above writes per-step CSV files into{" "}
+                        <code>outputs/ui_exports/&lt;timestamp&gt;/</code>. Omitting{" "}
+                        <code>render_directory</code> stores the results in{" "}
+                        <code>render_logs/&lt;timestamp&gt;/</code> by default.
                     </p>
-                    <p>
-                        The time instant is converted from timesteps, which are sequential numbers that the Simulator uses for day/month/year hour:minute:second
-                        dates. If you want to toggle this feature off, you can comment the render method in code.
-                        A feature to turn this off through the schema is being added in the near future.
+
+                    <h3 className="text-xl font-semibold mt-6 mb-2"> Export-at-the-End Example </h3>
+                    <pre className="p-1 rounded-lg overflow-x-auto text-sm">
+                        <code>{`from citylearn.citylearn import CityLearnEnv
+
+env = CityLearnEnv(schema, central_agent=True, episode_time_steps=48, render=False)
+observations, _ = env.reset()
+while not env.terminated:
+    actions = [env.action_space[0].sample()]
+    observations, reward, terminated, truncated, info = env.step(actions)
+
+class _Model:
+    pass
+
+model = _Model()
+model.env = env
+
+env.export_final_kpis(model, filepath='exported_kpis.csv')
+print('Render folder:', env.new_folder_path)`}</code>
+                    </pre>
+                    <p className="mt-2">
+                        This pattern keeps rendering off (fastest) and emits the UI-compatible
+                        folder once the run completes. The helper reuses the same rules for{" "}
+                        <code>render_directory</code>/<code>render_directory_name</code> if they
+                        were provided during construction.
+                    </p>
+
+                    <p className="mt-4">
+                        The UI consumes the directory produced by either of the latter two
+                        approaches. The system uses the :meth: <code>~citylearn.citylearn.CityLearnEnv.render</code> method to iterate over buildings, electric vehicles, batteries, chargers, pricing, etc., using their <code>as_dict</code> outputs
+                        to build CSV histories where each row corresponds to a time instant and columns include units. Timestamps are converted to calendar dates for display. You can disable step-wise exporting by keeping <code>render=False</code> and relying on the end-of-run exporter.
                     </p>
                 </section>
 
