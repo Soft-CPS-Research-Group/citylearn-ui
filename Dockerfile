@@ -1,20 +1,15 @@
-# Build the React app
-FROM node:18 AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+RUN npm ci
+
 COPY . .
 RUN npm run build
 
-# Serve the static files with Nginx
-FROM nginx:alpine
+FROM nginx:1.27-alpine
 
-# Copy build files to Nginx public folder
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Copy custom Nginx config if needed
-# COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
