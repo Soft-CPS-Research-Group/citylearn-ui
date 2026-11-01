@@ -1,0 +1,15 @@
+KPI,District,Building_1
+building_cost_daily_average_baseline_eur,,-3.661
+building_cost_daily_average_control_eur,,-3.661
+building_cost_daily_average_delta_eur,,-0.0
+building_cost_ratio_to_baseline_total_ratio,,1.0
+building_cost_total_baseline_eur,,-7.169
+building_cost_total_control_eur,,-7.169
+building_cost_total_delta_eur,,-0.0
+district_cost_daily_average_baseline_eur,22.463,
+district_cost_daily_average_control_eur,22.463,
+district_cost_daily_average_delta_eur,-0.0,
+district_cost_ratio_to_baseline_total_ratio,1.0,
+district_cost_total_baseline_eur,43.989,
+district_cost_total_control_eur,43.989,
+district_cost_total_delta_eur,-0.0,

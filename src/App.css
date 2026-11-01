@@ -34,7 +34,13 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -1444,7 +1450,8 @@ tr:last-child td {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(15, 118, 110, 0.06), rgba(255, 255, 255, 0.96) 58%), #ffffff;
+  background:
+    linear-gradient(180deg, rgba(15, 118, 110, 0.06), rgba(255, 255, 255, 0.96) 58%), #ffffff;
   box-shadow: var(--shadow);
 }
 
@@ -2800,4 +2807,279 @@ tr:last-child td {
   .source-pill {
     max-width: 100%;
   }
+}
+
+.ev-service-evidence {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 3px;
+  color: var(--muted-strong);
+  font-size: 11px;
+  line-height: 1.35;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+
+.import-context {
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  min-width: 0;
+}
+.import-context summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 650;
+}
+.import-context summary span {
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 8px;
+}
+.import-context-body {
+  margin-top: 12px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.import-context-body dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+.import-context-body dt {
+  color: var(--muted);
+}
+.import-context-body dd {
+  margin: 3px 0 0;
+}
+.import-context-body pre {
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+.import-context-body details {
+  margin-top: 10px;
+}
+.import-data-table {
+  min-width: 0;
+  margin: 10px 0;
+}
+.import-data-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.import-data-table td,
+.import-data-table th {
+  padding: 6px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.import-table-pages,
+.generic-view-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 12px;
+}
+.import-table-pages button,
+.generic-view-controls button {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 4px;
+}
+.comparison-context {
+  padding: 12px 16px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.comparison-context p {
+  color: var(--muted-strong);
+}
+.compare-kpi-job .import-context {
+  margin: 4px 0 0;
+  padding: 6px;
+}
+.generic-equipment {
+  min-width: 0;
+}
+
+.timeline-note,
+.timeline-basis {
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.timeline-note {
+  margin: 8px 0;
+}
+.timeline-note p {
+  margin: 3px 0;
+}
+.timeline-basis {
+  display: block;
+  margin-top: 6px;
+}
+.source-rows {
+  margin-top: 12px;
+  font-size: 12px;
+  min-width: 0;
+}
+.source-rows summary {
+  cursor: pointer;
+}
+.equipment-card > .timeseries-toolbar {
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.data-quality {
+  min-width: 0;
+  padding: 10px 16px;
+  margin: 0 0 12px;
+}
+.data-quality summary,
+.chart-quality summary {
+  cursor: pointer;
+  font-size: 12px;
+}
+.data-quality summary span {
+  color: var(--muted);
+  margin-left: 8px;
+}
+.data-quality[data-import-quality="review"] {
+  border-left: 3px solid #b7791f;
+}
+.data-quality-body {
+  font-size: 12px;
+  margin-top: 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.data-quality-body label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+.data-quality-body input {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 5px;
+  max-width: 100%;
+}
+.quality-issues td,
+.quality-issues th {
+  padding: 8px;
+  vertical-align: top;
+}
+.quality-issues small {
+  display: block;
+  margin-top: 6px;
+}
+.quality-source pre {
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow: auto;
+}
+.chart-quality {
+  font-size: 12px;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+.chart-quality[data-quality-status="partial"],
+.chart-quality[data-quality-status="unknown"] {
+  border-left: 3px solid #b7791f;
+}
+.chart-quality th,
+.chart-quality td {
+  padding: 6px;
+  text-align: left;
+}
+
+.quality-issues th:nth-child(4) {
+  min-width: 88px;
+  white-space: nowrap;
+}
+.quality-issues th:last-child,
+.quality-issues td:last-child {
+  min-width: 84px;
+}
+.quality-issues button {
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: white;
+}
+
+.quality-source tr:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.import-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid #bcd9d7;
+  border-radius: 0.75rem;
+  background: #eef7f6;
+}
+.import-progress [role="status"] {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.import-progress-file {
+  overflow-wrap: anywhere;
+}
+.import-notice {
+  margin: 1rem 1.5rem;
+}
+.chart-overview {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: #f1f6f7;
+  border-radius: 0.5rem;
+}
+.chart-overview summary {
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .import-progress {
+    flex-wrap: wrap;
+    margin: 0.75rem;
+  }
+}
+.import-table-pages label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.import-table-pages input {
+  width: 5.5rem;
+  min-width: 0;
+  padding: 0.4rem;
+}
+/* Keep long overview tables inside the chart pane on narrow screens. */
+.sim-chart-grid,
+.equipment-card.sim-chart {
+  grid-template-columns: minmax(0, 1fr);
+}
+.equipment-card.sim-chart > * {
+  min-width: 0;
+}
+.chart-overview {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }

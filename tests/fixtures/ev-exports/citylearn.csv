@@ -1,0 +1,13 @@
+KPI,District,Building_1
+building_ev_events_departure_count,,2.0
+building_ev_events_departure_met_count,,0.0
+building_ev_events_departure_within_tolerance_count,,0.0
+building_ev_performance_departure_soc_deficit_mean_ratio,,0.128
+building_ev_performance_departure_success_ratio,,0.0
+building_ev_performance_departure_within_tolerance_ratio,,0.0
+district_ev_events_departure_count,14.0,
+district_ev_events_departure_met_count,0.0,
+district_ev_events_departure_within_tolerance_count,4.0,
+district_ev_performance_departure_soc_deficit_mean_ratio,0.173,
+district_ev_performance_departure_success_ratio,0.0,
+district_ev_performance_departure_within_tolerance_ratio,0.286,

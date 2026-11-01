@@ -1,0 +1,33 @@
+{
+  "origin": "Native CPS export from frozen 1.9.11 + local C1-C6 verified by C7. CSV/long/partitioned Parquet are representation conversions of the same measured values; no new simulation. Example metadata includes the corresponding evaluated BAU manifest; root path removed for portability. Codec files are synthetic type-decoding probes.",
+  "files": {
+    "codec-brotli.parquet": "d184f6edc296a89c0bec7278b4fdb8761c15db0dab60ec3828953c6e6ded2373",
+    "native.manifest.json": "2f123c1af081d480226c659fe66789422af6e9c6d2d0873f6dcb74e98e526c59",
+    "codec-zstd.parquet": "fea6ab33d45fdc278e5505d90e5c87e00b1bdf996c8c8b410d595fa934c16bfb",
+    "exported_kpis.robustness.json": "0be03b46c3cd6e82e39cc927a9b51256030b2edf9fa2764bb4e352b66e912bf0",
+    "exported_kpis.deferrable_service.json": "8c6947b72525df29e6908354cc2af609a65e8b38316032bd9119360c8016f58f",
+    "long.csv": "80c5c9f6aa78b5475c1aedb708ab536070969f98a1827e9e66d7b4982fe8ec26",
+    "codec-gzip.parquet": "8095d816c5fd520a31d46ed655c3bd89cfa3eab14241a95dbb9ad4b9d2f9860b",
+    "codec-plain.parquet": "1a5e5d614604ff80338cb50f52217ff6d020644fcc00f68676768fa368e739b9",
+    "csv/exported_data_community_ep0.csv": "c5c8b27db6aff1de10d55cb2ce0b3ef5adb26bf250121f50ccc506e47f1a8cec",
+    "csv/exported_data_member_001_CHG-M001-01_ep0.csv": "f1bb130d952d54e6238fa269255fce37a90aadd347cac82e8a5a9ce73966d9c5",
+    "csv/exported_data_ev-m001-01_ep0.csv": "3cabbb6848eb03a5cb1f916984db5549becc975b3eaaed433934547be5e12066",
+    "csv/exported_data_member_001_battery_ep0.csv": "bafd33ad1dac8ff4723082a74e82571195baecf4592932dea78bb947f5e2ca44",
+    "csv/exported_data_pricing_ep0.csv": "b7c38767c7324d9a9eaa48c29eb7554af92ce643d10fd6de83df2394646742c6",
+    "csv/exported_kpis.csv": "d44b55501db046e780947d1a7ab0c0a9bc915e7f0c95ee4bd57448085a6ee094",
+    "csv/exported_data_member_001_ep0.csv": "d30e8d1cdd5b7807d0dc45dfc835630ed56be1274758722b5022edbdba5a64ba",
+    "parquet/exported_data_community_ep0_part00001.parquet": "05ade83f91a717cdf64fa43404c19a979f190339a99c14b888a161885ef074aa",
+    "parquet/exported_kpis.parquet": "394b991ead47f8ecc09a58e67cc65c72e5a69e30cd26a9be161e8b26bbf5e559",
+    "parquet/exported_data_ev-m001-01_ep0_part00000.parquet": "a0e57645d8b0e8e3d56af75dfef8e62f5eeff92c44edd94902f4e8b1405b6954",
+    "parquet/exported_data_member_001_ep0_part00001.parquet": "1d354c618d71bcad469c178afec80da6f15ed4f7748a4e9b6c62987b5291a31e",
+    "parquet/exported_data_member_001_ep0_part00000.parquet": "f3bf07f57f7a3d025b8d89e123ccbc359917865ed27d9999eab0994bfcaa74ec",
+    "parquet/exported_data_member_001_battery_ep0_part00000.parquet": "d4a943ce0e73ea5c97a4726e8accf3c901b599dce850c5aa8764aa90e9d18ec8",
+    "parquet/exported_data_member_001_CHG-M001-01_ep0_part00001.parquet": "372ef3c7ddd95dc56cab5f8b995067b04444da031e3759deffb450abf8ec6481",
+    "parquet/exported_data_pricing_ep0_part00000.parquet": "4a180399b97d768c2ed8bb68ef8457ba61d8748740e863ee52ff36e9e12a78bd",
+    "parquet/exported_data_pricing_ep0_part00001.parquet": "dfb105de5a60fc444a69577c5565b74cc9f752e0de67bb4c43387e15b9422216",
+    "parquet/exported_data_member_001_battery_ep0_part00001.parquet": "e84150bf3f859f4fb522c18d5ccf0e6b06c70fc9195c13488d3c4c74e7db0fde",
+    "parquet/exported_data_ev-m001-01_ep0_part00001.parquet": "489fa097a3d30dbd549e337ad5563e503fd43cb73cf7113a72aecea58751502b",
+    "parquet/exported_data_community_ep0_part00000.parquet": "a1d8b71e79b049f5426b84d9eab7adc9dacc23ef562ba93f7fefd1e5c21014bd",
+    "parquet/exported_data_member_001_CHG-M001-01_ep0_part00000.parquet": "e06238137617858b9bcb77920257a4bb95c6c11a625e1e580b8c511e34e7ed40"
+  }
+}

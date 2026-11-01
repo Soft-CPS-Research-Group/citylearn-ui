@@ -1,0 +1,37 @@
+{
+  "citylearn.csv": {
+    "source_revision": "599a970669daf77f8409ce970aca79e9f03d9047",
+    "selection": "Unmodified EV departure KPI strings for District and one member, including nulls, audit counts and legacy rates.",
+    "sha256": "312d9572e84672741a802af3848b27e996623773d5ea1da5083cc075504d4864"
+  },
+  "cps-micro.csv": {
+    "source_revision": "1.9.11 + verified local C1-C6",
+    "selection": "Unmodified EV departure KPI strings for District and one member, including nulls, audit counts and legacy rates.",
+    "sha256": "b4ee77d8a3e83c00826e89f311a2bb33ab60734c01b1a6180af60bc933b45b78"
+  },
+  "cps-core.csv": {
+    "source_revision": "1.9.11 + verified local C1-C6",
+    "selection": "Unmodified EV departure KPI strings for District and one member, including nulls, audit counts and legacy rates.",
+    "sha256": "de1bc2119cbf0bd519ecce534b0017d8d9a620b078c44e9f5fe2aca230a6dffb"
+  },
+  "cps-premium.csv": {
+    "source_revision": "1.9.11 + verified local C1-C6",
+    "selection": "Unmodified EV departure KPI strings for District and one member, including nulls, audit counts and legacy rates.",
+    "sha256": "eabcf09ce224c702556dad569b62e6203f2d6250bfc119d2254620af431a7cb1"
+  },
+  "legacy-basic.csv": {
+    "source_revision": "Existing bundled UI export",
+    "selection": "Unmodified EV departure KPI strings for District and one member, including nulls, audit counts and legacy rates.",
+    "sha256": "4eb05087061c719fcccf7ca6302ea25234cd8e28a8f2b095cbaa0d861f47b14e"
+  },
+  "legacy-community.csv": {
+    "source_revision": "Existing bundled UI export",
+    "selection": "Unmodified EV departure KPI strings for District and one member, including nulls, audit counts and legacy rates.",
+    "sha256": "3708a14afc6c14134a7a33dac61ecd203438d3070c7a8f806d97ceb766043d01"
+  },
+  "legacy-smart.csv": {
+    "source_revision": "Existing bundled UI export",
+    "selection": "Unmodified EV departure KPI strings for District and one member, including nulls, audit counts and legacy rates.",
+    "sha256": "a5d9819f8ebebd98c42696c208e63b21e56fd7d13f8352a264a9221202b773ab"
+  }
+}

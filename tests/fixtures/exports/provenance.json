@@ -1,0 +1,278 @@
+{
+  "cps": {
+    "source_revision": "8157f605e26fb75651037451fb453b1a48056787 + local C1-C6 verified by C7",
+    "kind": "Eight-row excerpts of genuine simulator exports; timestamps and values preserved.",
+    "files": {
+      "exported_data_community_ep0.csv": {
+        "rows": 8,
+        "sha256": "9b6f47f8ed2e32c7bf34f831233273cee022d09a78963a3360d496499d372dea"
+      },
+      "exported_data_member_003_CHG-M003-01_ep0.csv": {
+        "rows": 8,
+        "sha256": "b1b6df085723dafeb12c01be47b81463618e7f2647b1a18b54439aaf44807af5"
+      },
+      "exported_data_member_001_CHG-M001-01_ep0.csv": {
+        "rows": 8,
+        "sha256": "d992e527a3fcf47505589f2ad27229331288b638eff17d718b5651efe883e204"
+      },
+      "exported_data_ev-m001-01_ep0.csv": {
+        "rows": 8,
+        "sha256": "648756b4e32aaf890303f3950dc1150b0502327cecf7314195b5458a97458760"
+      },
+      "exported_data_member_004_ep0.csv": {
+        "rows": 8,
+        "sha256": "ea1c82b12709bb86c483a40386f9a7e6c629db480789450ea25821a8548f4e6c"
+      },
+      "exported_data_member_003_ep0.csv": {
+        "rows": 8,
+        "sha256": "e792b05e3bf7b34d43b92e8da7e16617ccc8dde9dde481de164ac2698c7177e1"
+      },
+      "exported_data_member_003_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "b84a6004ad29114434024c31b1e3b735eaf904e1ef8c128a4274ab051f1a03f2"
+      },
+      "exported_data_member_002_ep0.csv": {
+        "rows": 8,
+        "sha256": "1197df0ccf7c1da3d9b674a737a16dc610fc81cc08a7634f91e04801d8f223a4"
+      },
+      "exported_data_member_001_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "b99760a3d15c6ffabcc7935dc8dc7f74da4020d188ee2ac9d57962076fb8c273"
+      },
+      "exported_data_pricing_ep0.csv": {
+        "rows": 8,
+        "sha256": "1ad3a2a52721f61afcf42082adaaadc10e714a70f1d5abd1bf836d6d281db3c8"
+      },
+      "exported_data_member_004_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "b84a6004ad29114434024c31b1e3b735eaf904e1ef8c128a4274ab051f1a03f2"
+      },
+      "exported_data_member_002_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "b84a6004ad29114434024c31b1e3b735eaf904e1ef8c128a4274ab051f1a03f2"
+      },
+      "exported_data_member_001_ep0.csv": {
+        "rows": 8,
+        "sha256": "f79ece685fa88ef9e39c62fd79185affa9aedfc4d9c46b0e2777070136cf8b63"
+      },
+      "exported_data_ev-m003-01_ep0.csv": {
+        "rows": 8,
+        "sha256": "c37585ee3558e0f2918aa590cd61936fe9c0453811306e5013fb604c0ba4c63b"
+      }
+    }
+  },
+  "citylearn": {
+    "source_revision": "599a970669daf77f8409ce970aca79e9f03d9047",
+    "kind": "Eight-row excerpts of genuine simulator exports; timestamps and values preserved.",
+    "files": {
+      "exported_data_community_ep0.csv": {
+        "rows": 8,
+        "sha256": "4c29e2515adcd252e460534ad17ea80f258a826513329b6462ca4ed8dfc77741"
+      },
+      "exported_data_building_9_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_17_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_11_ep0.csv": {
+        "rows": 8,
+        "sha256": "d6dfb64c43554aff8eb238ba3bb1344acba2a5123174e5d52a5ad4a0e17de0ea"
+      },
+      "exported_data_building_7_charger_7_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "8ebb43612c225253a76ba12fac88800d2602850810437ca472c16f5008446749"
+      },
+      "exported_data_building_1_charger_1_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "794cda6b6e2be4d6a56199aeaf4a3084deae0281883e3fb9dbd0203ad1353531"
+      },
+      "exported_data_building_5_ep0.csv": {
+        "rows": 8,
+        "sha256": "0fdb79c1084835d8ee55d7cc0eb8eb1ffd0716f63680dfecfc7549360ddd966b"
+      },
+      "exported_data_building_14_ep0.csv": {
+        "rows": 8,
+        "sha256": "8c54eb3d3691af7f7fa848aeb435ca3d1ea08947cfcf0634900442857ff5282a"
+      },
+      "exported_data_building_17_ep0.csv": {
+        "rows": 8,
+        "sha256": "232e9ccd6662f9710a1185c93a02f264f0282279af2b9b29608cb96b75d22b72"
+      },
+      "exported_data_building_15_ep0.csv": {
+        "rows": 8,
+        "sha256": "c458cf2818ce1ca59f465a30d43b05916276f787367bf12e5caada83a15363d3"
+      },
+      "exported_data_building_1_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_7_ep0.csv": {
+        "rows": 8,
+        "sha256": "28c017f07481edb3079ad97ef4e03adcee43324327d804b2d41200746b6ad349"
+      },
+      "exported_data_building_15_charger_15_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "1e800f9e01deb7168f2071c1692f58f26fb8435941e05a1a22313167c3d0a866"
+      },
+      "exported_data_building_15_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_electric_vehicle_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "9bd9b945fc56463c2b1ab9629bfc67929b82b881fa25337234496ed0ac7790eb"
+      },
+      "exported_data_building_5_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_8_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_electric_vehicle_3_ep0.csv": {
+        "rows": 8,
+        "sha256": "4e781c1af4b0beee8e12ffcfba143406fb099c8c462b4472f9bb1865b739b5a6"
+      },
+      "exported_data_pricing_ep0.csv": {
+        "rows": 8,
+        "sha256": "4cafba79a6389623a651dca284f90478fd0dbd15b394ef080c73038471a27a5b"
+      },
+      "exported_data_electric_vehicle_4_ep0.csv": {
+        "rows": 8,
+        "sha256": "0b3189c78c98f896277b6408e8344e6617b288af55a7c9948e79ac9e48eb0bc8"
+      },
+      "exported_data_building_4_ep0.csv": {
+        "rows": 8,
+        "sha256": "1843d3861505e1c583519c80aa204ef749736edb5779e8782aeb5ec44692516e"
+      },
+      "exported_data_building_10_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_15_charger_15_2_ep0.csv": {
+        "rows": 8,
+        "sha256": "c3b127a28b13f4a994f597eae8903a9b0518b823e4e662da383520e1e6fe025f"
+      },
+      "exported_data_building_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "4483dec5807f2bb24fbb2002cde6424a1fd15345c332c5b530b316e5c130d370"
+      },
+      "exported_data_building_10_ep0.csv": {
+        "rows": 8,
+        "sha256": "b38d239c1480838f446e2cca640631f673bb7330b70cfd8b00f1620e270b211d"
+      },
+      "exported_data_building_16_ep0.csv": {
+        "rows": 8,
+        "sha256": "9db8f7e1d39944e4b5cb8f7ce43806d2a166e4c1895f03d1871bbd1be733adce"
+      },
+      "exported_data_building_12_ep0.csv": {
+        "rows": 8,
+        "sha256": "ed1d0469bbd23403a6532cef9422a47897a34ab88551e9dea8de4de21bebd493"
+      },
+      "exported_data_building_12_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_2_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_2_ep0.csv": {
+        "rows": 8,
+        "sha256": "d9879716e17ed041291073d48802609ac39c48bc83b507a8f151168194b1177d"
+      },
+      "exported_data_building_13_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_electric_vehicle_8_ep0.csv": {
+        "rows": 8,
+        "sha256": "11dc2c7f4f68798309f7a276c39f51838e5946ed1361e2f97ad452f0b1ebda0d"
+      },
+      "exported_data_building_10_charger_10_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "22e544790240dd9cc2781d5eaec531965c742449961b51b86599bef6498c6657"
+      },
+      "exported_data_electric_vehicle_2_ep0.csv": {
+        "rows": 8,
+        "sha256": "980de04e262393afc7bbca0976fff689ceeff457dacee82a044a74d0588c1559"
+      },
+      "exported_data_electric_vehicle_7_ep0.csv": {
+        "rows": 8,
+        "sha256": "ff315f7ee38ec7829114955db89cc3ff27b6f9e9d939236656605ab4d27ebf16"
+      },
+      "exported_data_building_9_ep0.csv": {
+        "rows": 8,
+        "sha256": "674f44bd0a3efae0764aac9797cbbddf6f4a444fd1f486a7f326b137e4d3ea40"
+      },
+      "exported_data_building_5_charger_5_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "6b8e493ac1d1b7e94b23bb72480b5f1315bf6162d6e23ce58d97d31ba92262e3"
+      },
+      "exported_data_building_12_charger_12_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "80d8d127f61f93a9ad0e45b2e52e985484e61f26e38176ae7286e27c3099521e"
+      },
+      "exported_data_building_16_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_8_ep0.csv": {
+        "rows": 8,
+        "sha256": "8ced4a159648731fce9af9e3e013f1c23949b84db42fff5dc105611f2c418310"
+      },
+      "exported_data_building_7_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_13_ep0.csv": {
+        "rows": 8,
+        "sha256": "31f21cbb0100c4dd104f440a394db6d744e966c9fff003382eb96b8e69c7c4ac"
+      },
+      "exported_data_building_6_ep0.csv": {
+        "rows": 8,
+        "sha256": "b9b07bc54e85a4817f8453f3bfd6641e17b00b61db960bdedfa50b6968ec984f"
+      },
+      "exported_data_building_11_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_6_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_electric_vehicle_5_ep0.csv": {
+        "rows": 8,
+        "sha256": "48aa4bcb6b6d2d427928baf0546d34579202bf4abef3e9306a62793a5e03755d"
+      },
+      "exported_data_building_14_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_4_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_3_ep0.csv": {
+        "rows": 8,
+        "sha256": "75b4eb99270763b8dfb8475df31257a5ce96cb2579fb5124beb6d649e31d8705"
+      },
+      "exported_data_electric_vehicle_6_ep0.csv": {
+        "rows": 8,
+        "sha256": "8de1d74a24e46bd27f3dda37b189774e08d00f0e5373b1e69daac612fc52faac"
+      },
+      "exported_data_building_3_battery_ep0.csv": {
+        "rows": 8,
+        "sha256": "85541889efae87a02653eb9a84372101d2ace733bb2a2ff3b689d8b47ee0c14a"
+      },
+      "exported_data_building_4_charger_4_1_ep0.csv": {
+        "rows": 8,
+        "sha256": "97a89a2a8f57d085818267515003070546fe81607be0b8b29272dd78165d71e4"
+      }
+    }
+  }
+}

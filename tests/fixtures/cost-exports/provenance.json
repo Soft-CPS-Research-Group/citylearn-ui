@@ -1,0 +1,37 @@
+{
+  "citylearn.csv": {
+    "source_revision": "599a970669daf77f8409ce970aca79e9f03d9047",
+    "selection": "Unmodified cost KPI strings for District and one member; all cost families retained to test exact matching.",
+    "sha256": "663d0756a4feb2fc341ce5cade225663c584a8e60deeece7a084572eb559d5f0"
+  },
+  "cps-micro.csv": {
+    "source_revision": "1.9.11 + verified local C1-C6",
+    "selection": "Unmodified cost KPI strings for District and one member; all cost families retained to test exact matching.",
+    "sha256": "57b9825f98c7b5dcf4538b98ab27f6889c3a18c30167283cc738089157c67af4"
+  },
+  "cps-core.csv": {
+    "source_revision": "1.9.11 + verified local C1-C6",
+    "selection": "Unmodified cost KPI strings for District and one member; all cost families retained to test exact matching.",
+    "sha256": "af2fa46fd670f7dd97b7f836315817f2025bf728f19a16234c38e80b747dccbc"
+  },
+  "cps-premium.csv": {
+    "source_revision": "1.9.11 + verified local C1-C6",
+    "selection": "Unmodified cost KPI strings for District and one member; all cost families retained to test exact matching.",
+    "sha256": "9d305a051cc00635447e9f3c1574fffbe77c5936fa8b40a7927227bc3dc1c7e7"
+  },
+  "legacy-basic.csv": {
+    "source_revision": "Existing bundled UI export",
+    "selection": "Unmodified cost KPI strings for District and one member; all cost families retained to test exact matching.",
+    "sha256": "abc8d786fb92fbe46ead5e51080e2f1a219d76c5e26c0aaded970ae2556122cc"
+  },
+  "legacy-community.csv": {
+    "source_revision": "Existing bundled UI export",
+    "selection": "Unmodified cost KPI strings for District and one member; all cost families retained to test exact matching.",
+    "sha256": "54da9df6448c3151781ea65df597a6455169ab26c4628b77fa7da2358e931f43"
+  },
+  "legacy-smart.csv": {
+    "source_revision": "Existing bundled UI export",
+    "selection": "Unmodified cost KPI strings for District and one member; all cost families retained to test exact matching.",
+    "sha256": "0c05aef5d3932a90a8f4478e47ae17c599830d7b0248dd987bb51168eb8cb692"
+  }
+}

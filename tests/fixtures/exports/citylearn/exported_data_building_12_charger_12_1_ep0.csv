@@ -1,0 +1,9 @@
+timestamp,Charger Consumption-kWh,Charger Production-kWh,Incoming EV Name,Charging Action-kWh,EV SOC-%,EV Charger State,EV Required SOC Departure-%,EV Estimated SOC Arrival-%,EV Arrival Time,EV Departure Time,Is EV Connected,EV Name,EV SOC
+2024-08-01T00:00:00,-1.00,0.0,,0.0,0.86,1.0,0.86,-0.1,-1,14,True,Electric_Vehicle_4,
+2024-08-01T01:00:00,-1.00,0.0,,0.0,0.85,1.0,0.86,-0.1,-1,13,True,Electric_Vehicle_4,
+2024-08-01T02:00:00,-1.00,0.0,,0.0,0.85,1.0,0.86,-0.1,-1,12,True,Electric_Vehicle_4,
+2024-08-01T03:00:00,-1.00,0.0,,0.0,0.84,1.0,0.86,-0.1,-1,11,True,Electric_Vehicle_4,
+2024-08-01T04:00:00,-1.00,0.0,,0.0,0.84,1.0,0.86,-0.1,-1,10,True,Electric_Vehicle_4,
+2024-08-01T05:00:00,-1.00,0.0,,0.0,0.83,1.0,0.86,-0.1,-1,9,True,Electric_Vehicle_4,
+2024-08-01T06:00:00,-1.00,0.0,,0.0,0.83,1.0,0.86,-0.1,-1,8,True,Electric_Vehicle_4,
+2024-08-01T07:00:00,-1.00,0.0,,0.0,0.82,1.0,0.86,-0.1,-1,7,True,Electric_Vehicle_4,
