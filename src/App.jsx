@@ -4,8 +4,6 @@ import { createImportTask } from "./results/import-task.js";
 import { ImportProgress } from "./components/ImportProgress.jsx";
 import { GitHubMark, Footer } from "./components/Footer.jsx";
 import { EmptyState, Sidebar } from "./components/Sidebar.jsx";
-import { ImportContext } from "./components/results/ImportContext.jsx";
-import { QualityPanel } from "./components/results/DataQuality.jsx";
 import { TimeseriesView } from "./features/timeseries/TimeseriesView.jsx";
 import { KpiView } from "./features/kpis/KpiView.jsx";
 import { CompareView } from "./features/comparison/CompareView.jsx";
@@ -226,7 +224,7 @@ function App() {
                       role="tab"
                       aria-selected={view === tab.id}
                     >
-                      <Icon size={16} aria-hidden="true" />
+                      <Icon size={18} aria-hidden="true" />
                       {tab.label}
                     </button>
                   );
@@ -234,12 +232,6 @@ function App() {
               </div>
             </section>
 
-            {view !== "compare" && activeSimulation && (
-              <ImportContext simulation={activeSimulation} />
-            )}
-            {view !== "compare" && activeSimulation && (
-              <QualityPanel key={activeSimulation.id} simulation={activeSimulation} />
-            )}
             {view === "timeseries" && activeSimulation && (
               <TimeseriesView
                 simulation={activeSimulation}

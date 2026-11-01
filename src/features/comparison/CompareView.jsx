@@ -11,10 +11,8 @@ import {
 } from "../../results/kpi-comparison.js";
 import { GitCompareArrows, Table2, Search } from "lucide-react";
 import { KpiScopeTree } from "../kpis/KpiScopeTree.jsx";
-import { ComparisonContext, ImportContext } from "../../components/results/ImportContext.jsx";
-import { QualityPanel } from "../../components/results/DataQuality.jsx";
+import { ComparisonContext } from "../../components/results/ImportContext.jsx";
 import { formatKpiScorecardValue } from "../../results/kpi-scorecard.js";
-import { EvServiceEvidence } from "../kpis/EvServiceEvidence.jsx";
 import { isFiniteNumber } from "../../results/values.js";
 
 function CompareView({ simulations, compareIds }) {
@@ -118,8 +116,6 @@ function CompareView({ simulations, compareIds }) {
                   {simulation.series.length} series / {simulation.kpis?.rows.length || 0} KPI rows
                 </span>
                 <em>{getCompareSimulationReferenceSummary(simulation, selectedScope)}</em>
-                <ImportContext simulation={simulation} />
-                <QualityPanel key={simulation.id} simulation={simulation} />
               </article>
             ))}
           </div>
@@ -158,7 +154,6 @@ function CompareView({ simulations, compareIds }) {
                 <article className="compare-score-row" key={row.id}>
                   <div className="compare-score-main">
                     <strong>{row.title}</strong>
-                    <small>{row.description}</small>
                     <span>
                       {row.reportedCount}/{selectedKpiSimulations.length} reported
                     </span>
@@ -189,7 +184,6 @@ function CompareView({ simulations, compareIds }) {
                         </small>
                         <strong>{signal ? formatKpiScorecardValue(signal) : "Not reported"}</strong>
                         {row.mixedMeasures && <small>{signal?.title}</small>}
-                        <EvServiceEvidence signal={signal} />
                         <span className="compare-score-cell-meta">
                           {best && (
                             <em>

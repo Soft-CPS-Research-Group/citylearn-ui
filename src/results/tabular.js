@@ -1,3 +1,4 @@
+import { longKpiIdentity, qualifiedScopeLabel } from "./kpi-identities.js";
 import { SOURCE, EXCLUDED, issue, numericValue } from "./quality.js";
 import Papa from "papaparse";
 import { isFiniteNumber } from "./values.js";
@@ -300,27 +301,28 @@ export function adaptKpis(table, fileName) {
       entities = [],
       seenEntities = new Set(),
       identities = new Set(),
-      levels = new Map();
+      levels = new Map(),
+      scopeIdentities = new Map();
     for (const row of rows) {
-      const name = String(row[entity] ?? "").trim(),
-        key = String(row[metric] ?? "").trim();
-      if (!name || !key) throw new Error("Long KPI row has no entity or indicator identity.");
-      const identity = JSON.stringify([name, key]);
-      if (identities.has(identity))
-        throw new Error(`Duplicate KPI/entity identity: ${name} / ${key}.`);
-      identities.add(identity);
-      if (!seenEntities.has(name)) {
-        seenEntities.add(name);
-        entities.push(name);
+      const entity = longKpiIdentity(row, columns),
+        { entityKey, metric, metricKey } = entity;
+      if (entity.invalid)
+        throw new Error("Long KPI row has no entity, community or indicator identity.");
+      if (identities.has(metricKey))
+        throw new Error(`Duplicate KPI/entity identity: ${entity.name} / ${metric}.`);
+      identities.add(metricKey);
+      if (!seenEntities.has(entityKey)) {
+        seenEntities.add(entityKey);
+        entities.push(entityKey);
       }
-      if (!metrics.has(key)) metrics.set(key, new Map());
-      metrics.get(key).set(name, row[value]);
-      const level = field("level");
-      if (level && row[level] != null) {
-        if (levels.has(name) && levels.get(name) !== row[level])
-          throw new Error(`Conflicting levels for KPI entity ${name}.`);
-        levels.set(name, row[level]);
+      if (!metrics.has(metric)) metrics.set(metric, new Map());
+      metrics.get(metric).set(entityKey, row[value]);
+      if (entity.level) {
+        if (levels.has(entityKey) && levels.get(entityKey) !== entity.level)
+          throw new Error(`Conflicting levels for KPI entity ${entity.name}.`);
+        levels.set(entityKey, entity.level);
       }
+      if (entity.qualified) scopeIdentities.set(entityKey, entity);
     }
     let labelKey = "KPI";
     while (seenEntities.has(labelKey)) labelKey = "_" + labelKey;
@@ -337,6 +339,14 @@ export function adaptKpis(table, fileName) {
       labelKey,
       levels: Object.fromEntries(levels),
       inputShape: "long",
+      ...(field("community_id")
+        ? {
+            scopeIdentities: Object.fromEntries(scopeIdentities),
+            columnLabels: Object.fromEntries(
+              [...scopeIdentities].map(([key, entity]) => [key, qualifiedScopeLabel(entity)]),
+            ),
+          }
+        : {}),
     };
   }
   const labelKey =

@@ -1,8 +1,14 @@
-import { Table2, Building2 } from "lucide-react";
+import { Table2, Building2, Search } from "lucide-react";
+import { useState } from "react";
 
 function KpiScopeTree({ scopes, selectedScopeId, onSelectScope }) {
+  const [query, setQuery] = useState("");
   const community = scopes.find((scope) => scope.id === "community");
-  const buildings = scopes.filter((scope) => scope.id !== "community");
+  const buildings = scopes.filter(
+    (scope) =>
+      scope.id !== "community" &&
+      `${scope.column} ${scope.label}`.toLowerCase().includes(query.trim().toLowerCase()),
+  );
 
   return (
     <aside className="result-tree-panel sim-tree-panel kpi-tree-panel">
@@ -24,6 +30,16 @@ function KpiScopeTree({ scopes, selectedScopeId, onSelectScope }) {
             <span className="sim-tree-context-label">{community.label}</span>
           </button>
         )}
+        <label className="tree-search search-box">
+          <Search size={14} aria-hidden="true" />
+          <input
+            type="search"
+            aria-label="Find KPI scope"
+            placeholder="Find scope…"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </label>
       </header>
       <ul className="sim-tree-list">
         {buildings.map((scope) => (
@@ -39,7 +55,7 @@ function KpiScopeTree({ scopes, selectedScopeId, onSelectScope }) {
               <button
                 className="sim-tree-label"
                 type="button"
-                title={scope.column}
+                title={scope.qualified ? scope.label : scope.column}
                 onClick={() => onSelectScope(scope.id)}
               >
                 <span className="sim-tree-icon">
@@ -50,6 +66,9 @@ function KpiScopeTree({ scopes, selectedScopeId, onSelectScope }) {
             </div>
           </li>
         ))}
+        {query.trim() && !buildings.length && (
+          <li className="tree-empty">No scopes match this search.</li>
+        )}
       </ul>
     </aside>
   );

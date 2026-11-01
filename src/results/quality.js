@@ -44,7 +44,8 @@ export function analyzeTable(
     if (
       column === timeKey ||
       column === labelKey ||
-      (long && ["name", "cost_function", "level", "unit"].includes(column.toLowerCase()))
+      (long &&
+        ["name", "cost_function", "level", "unit", "community_id"].includes(column.toLowerCase()))
     )
       continue;
     const expected =

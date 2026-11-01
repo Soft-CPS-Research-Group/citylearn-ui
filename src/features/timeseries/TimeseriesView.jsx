@@ -7,7 +7,6 @@ import {
   getItemsTimeBounds,
   sortBuildingIds,
 } from "./result-items.js";
-import { reconstructCommunity } from "../../results/community.js";
 import { isFiniteNumber } from "../../results/values.js";
 import { FolderOpen, BarChart3 } from "lucide-react";
 import { TimeseriesToolbar } from "./TimeseriesToolbar.jsx";
@@ -30,13 +29,6 @@ function TimeseriesView({
   const communityItem = useMemo(
     () => createCommunityResultItem(tree, simulation, selectedEpisode),
     [tree, simulation, selectedEpisode],
-  );
-  const communityWarnings = useMemo(
-    () =>
-      communityItem
-        ? []
-        : reconstructCommunity(tree.buildings, simulation, selectedEpisode).warnings,
-    [communityItem, tree, simulation, selectedEpisode],
   );
   const flatItems = useMemo(() => flattenTreeItems(tree), [tree]);
   const selectedItem = useMemo(() => {
@@ -182,16 +174,6 @@ function TimeseriesView({
         />
       )}
 
-      {!displayBounds.compatible && (
-        <p className="timeline-note" role="status">
-          Clock contexts differ. Each chart uses its own range.
-        </p>
-      )}
-      {!communityItem && (
-        <p className="timeline-note" role="status">
-          {communityWarnings.join(" ")}
-        </p>
-      )}
       <div className="results-layout">
         <SimulationTree
           tree={tree}

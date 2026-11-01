@@ -8,6 +8,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { DataTable } from "../../components/results/ImportContext.jsx";
 import { getEquipmentChartConfig, CHART_COLORS } from "../../results/chart-config.js";
 import { useEquipmentChartData } from "./useEquipmentChartData.js";
+import { useChartZoom } from "./useChartZoom.js";
 import {
   deriveChargerActivityOverlay,
   EMPTY_CHARGER_OVERLAY,
@@ -17,7 +18,7 @@ import {
   buildChartData,
 } from "./chart-utils.js";
 import { TimeseriesToolbar } from "./TimeseriesToolbar.jsx";
-import { ChartQuality } from "../../components/results/DataQuality.jsx";
+import { clockLabel, chartTitle } from "./chart-presentation.js";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -33,8 +34,7 @@ import {
   LineChart,
 } from "recharts";
 import { formatTimelineValue } from "../../results/temporal.js";
-import { formatNumber } from "../../results/values.js";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, RotateCcw } from "lucide-react";
 
 function EquipmentChart({ item, controls = null }) {
   const [tableView, setTableView] = useState(Boolean(item.series.tableOnly));
@@ -60,8 +60,7 @@ function EquipmentChart({ item, controls = null }) {
       {tableView ? (
         <article className="equipment-card">
           <header>
-            <h3>{item.title}</h3>
-            <p>{item.series.fileName}</p>
+            <h3 title={item.series.fileName}>{chartTitle(item)}</h3>
           </header>
           <DataTable table={item.series} />
         </article>
@@ -117,6 +116,7 @@ function EquipmentPlot({ item, controls = null }) {
   const activeBarCount = activeSeries.filter((series) => series.chart !== "line").length;
   const barSize = getEquipmentBarSize(drawing.rows.length, activeBarCount, chartFrameWidth);
   const xDomain = useMemo(() => getEquipmentXDomain(rows, timeInterval), [rows, timeInterval]);
+  const zoom = useChartZoom(range, setRange, chartFrameRef, xDomain);
 
   useEffect(() => {
     const node = chartFrameRef.current;
@@ -138,12 +138,23 @@ function EquipmentPlot({ item, controls = null }) {
           ? "equipment-card sim-chart is-primary"
           : "equipment-card sim-chart"
       }
+      data-original-points={drawing.totalRows}
+      data-drawn-points={drawing.rows.length}
+      data-series-stats={JSON.stringify(drawing.stats)}
+      data-range-start={range[0]}
+      data-range-end={range[1]}
     >
       <header className="equipment-header">
         <div>
           <span className="eyebrow">{chartConfig.kind}</span>
-          <h3>{item.title}</h3>
-          <p>{item.series.fileName}</p>
+          <h3 title={item.series.fileName}>{chartTitle(item)}</h3>
+        </div>
+        <div className="chart-actions">
+          {zoom.zoomed && (
+            <button className="button button-ghost" type="button" onClick={zoom.reset}>
+              <RotateCcw size={14} aria-hidden="true" /> Reset zoom
+            </button>
+          )}
         </div>
       </header>
 
@@ -160,78 +171,8 @@ function EquipmentPlot({ item, controls = null }) {
         />
       )}
       <p className="timeline-note" data-clock-mode={timeline.mode}>
-        {timeline.basis}
-        {timeline.sourceTimezone ? ` · source timezone: ${timeline.sourceTimezone}` : ""}
+        {clockLabel(timeline)}
       </p>
-      {timeline.warnings.length > 0 && (
-        <div className="timeline-note" role="status">
-          {timeline.warnings.map((note, i) => (
-            <p key={i}>{note}</p>
-          ))}
-        </div>
-      )}
-      {item.series.aggregationEvidence && (
-        <p className="timeline-note" data-community-coverage="true">
-          {item.series.aggregationEvidence.membership} ·{" "}
-          {item.series.aggregationEvidence.partialIntervals}/
-          {item.series.aggregationEvidence.intervals} observed intervals have partial or unknown
-          member coverage. Values are known subtotals where coverage is incomplete.
-        </p>
-      )}
-      <ChartQuality
-        series={item.series}
-        rows={preparedRows}
-        configs={activeSeries}
-        range={range}
-        timeline={timeline}
-      />
-      {drawing.reduced && (
-        <details
-          className="chart-overview"
-          data-original-points={drawing.totalRows}
-          data-drawn-points={drawing.rows.length}
-        >
-          <summary>
-            Overview: drawing {drawing.rows.length} of {drawing.totalRows} interval aggregates
-          </summary>
-          <p>
-            Peaks and troughs are retained. Gaps may be summarised. Totals and data quality use
-            every selected interval; source rows remain complete. Narrow the period for detailed
-            timing.
-          </p>
-          <div className="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Signal</th>
-                  <th>Minimum</th>
-                  <th>Maximum</th>
-                  <th>Known interval total (all selected rows)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {drawing.stats.map((s) => (
-                  <tr key={s.field} data-overview-field={s.field}>
-                    <td>{s.label}</td>
-                    <td>{s.min === null ? "Unknown" : formatNumber(s.min)}</td>
-                    <td>{s.max === null ? "Unknown" : formatNumber(s.max)}</td>
-                    <td data-total={s.total ?? ""}>
-                      {s.total === null ? "—" : formatNumber(s.total)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </details>
-      )}
-      {overlayDrawing.reduced && (
-        <p className="timeline-note" data-overlay-events={overlayDrawing.totalEvents}>
-          Connection overlay simplified: {overlayDrawing.events.length}/{overlayDrawing.totalEvents}{" "}
-          events and {overlayDrawing.intervals.length}/{overlayDrawing.totalIntervals} connected
-          periods shown. Source records retain every connection.
-        </p>
-      )}
       <div className="sim-chart-legend">
         {chartConfig.series.map((series, index) => {
           const active = Boolean(visibleSeries[series.key]);
@@ -240,6 +181,7 @@ function EquipmentPlot({ item, controls = null }) {
               className={active ? "sim-legend-item is-active" : "sim-legend-item"}
               key={series.key}
               type="button"
+              aria-pressed={active}
               disabled={!series.field}
               onClick={() =>
                 setVisibleSeries((current) => ({
@@ -259,7 +201,11 @@ function EquipmentPlot({ item, controls = null }) {
       </div>
 
       {activeSeries.length > 0 && rows.length > 0 ? (
-        <div className="equipment-chart-frame sim-chart-canvas" ref={chartFrameRef}>
+        <div
+          className="equipment-chart-frame sim-chart-canvas"
+          ref={chartFrameRef}
+          {...zoom.events}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={drawing.rows}
@@ -268,7 +214,7 @@ function EquipmentPlot({ item, controls = null }) {
               barCategoryGap="24%"
               barGap={2}
             >
-              <CartesianGrid stroke="#e4e8ec" strokeDasharray="3 3" />
+              <CartesianGrid stroke="var(--line)" strokeDasharray="3 3" vertical={false} />
               <XAxis
                 type="number"
                 dataKey="timestamp"
@@ -317,8 +263,27 @@ function EquipmentPlot({ item, controls = null }) {
                   ifOverflow="extendDomain"
                 />
               ))}
-              <Tooltip labelFormatter={formatters.tooltip} formatter={tooltipValue} />
-              <Legend />
+              <Tooltip
+                labelFormatter={formatters.tooltip}
+                formatter={tooltipValue}
+                contentStyle={{
+                  background: "var(--panel)",
+                  borderColor: "var(--line)",
+                  borderRadius: 10,
+                  fontSize: 12,
+                }}
+              />
+              {zoom.selection && (
+                <ReferenceArea
+                  x1={Math.min(...zoom.selection)}
+                  x2={Math.max(...zoom.selection)}
+                  yAxisId="left"
+                  fill="var(--accent)"
+                  fillOpacity={0.15}
+                  stroke="var(--accent)"
+                  strokeOpacity={0.5}
+                />
+              )}
               {activeSeries.map((series, index) =>
                 series.chart === "line" ? (
                   <Line
@@ -367,6 +332,12 @@ function EquipmentPlot({ item, controls = null }) {
             </ComposedChart>
           </ResponsiveContainer>
         </div>
+      ) : activeSeries.length > 0 && rows.length === 0 ? (
+        <section className="empty-panel compact">
+          <BarChart3 size={24} aria-hidden="true" />
+          <h3>No data in selected period</h3>
+          <p>Choose another period to view the exported samples.</p>
+        </section>
       ) : (
         <GenericSeriesFallback series={item.series} metric={fallbackMetric} />
       )}

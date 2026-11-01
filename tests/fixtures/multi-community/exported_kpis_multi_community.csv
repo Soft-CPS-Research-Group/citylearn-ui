@@ -1,0 +1,6 @@
+cost_function,value,name,level,community_id
+district_cost_total_control_eur,80.0,District,district,north
+building_cost_total_control_eur,80.0,Building_1,building,north
+district_cost_total_control_eur,120.0,District,district,south
+building_cost_total_control_eur,120.0,Building_1,building,south
+portfolio_cost_total_control_eur,200.0,Portfolio,portfolio,__portfolio__

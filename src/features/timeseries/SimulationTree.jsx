@@ -5,7 +5,11 @@ import {
   FileSpreadsheet,
   ChevronDown,
   ChevronRight,
+  Search,
+  GitCompareArrows,
 } from "lucide-react";
+import { useState } from "react";
+import { isBauReference } from "./chart-presentation.js";
 
 function SimulationTree({
   tree,
@@ -23,21 +27,34 @@ function SimulationTree({
   selectedEpisode,
   onEpisodeChange,
 }) {
+  const [query, setQuery] = useState("");
+  const matchingBuildings = tree.buildings.filter((building) =>
+    `${building.id} ${building.label}`.toLowerCase().includes(query.trim().toLowerCase()),
+  );
+  const references = tree.other
+    .filter(isBauReference)
+    .map((item) => ({ ...item, label: "Business as usual" }));
+  const other = tree.other.filter((item) => !isBauReference(item));
   return (
     <aside className="result-tree-panel sim-tree-panel">
       <header className="sim-tree-head">
-        <label className="select-field compact tree-episode-select">
-          <span>Episode</span>
-          <select value={selectedEpisode} onChange={(event) => onEpisodeChange(event.target.value)}>
-            {episodes.map((episode) => (
-              <option key={episode} value={episode}>
-                {episode ? `Episode ${episode.replace(/ep/i, "")}` : "All data"}
-              </option>
-            ))}
-          </select>
-        </label>
+        {episodes.length > 1 && (
+          <label className="select-field compact tree-episode-select">
+            <span>Episode</span>
+            <select
+              value={selectedEpisode}
+              onChange={(event) => onEpisodeChange(event.target.value)}
+            >
+              {episodes.map((episode) => (
+                <option key={episode} value={episode}>
+                  {episode ? `Episode ${episode.replace(/ep/i, "")}` : "All data"}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <div className="sim-tree-headline">
-          <small>Community</small>
+          <small>Buildings & equipment</small>
           <span
             className="sim-tree-help"
             title="Ctrl/Cmd or Shift + click buildings to compare side by side."
@@ -54,9 +71,19 @@ function SimulationTree({
           <Building2 size={14} aria-hidden="true" />
           <span className="sim-tree-context-label">{communityItem?.label || communityLabel}</span>
         </button>
+        <label className="tree-search search-box">
+          <Search size={14} aria-hidden="true" />
+          <input
+            type="search"
+            aria-label="Find building"
+            placeholder="Find building…"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </label>
       </header>
       <ul className="sim-tree-list">
-        {tree.buildings.map((building) => (
+        {matchingBuildings.map((building) => (
           <TreeBuildingNode
             key={building.id}
             building={building}
@@ -68,6 +95,9 @@ function SimulationTree({
             onToggle={onToggle}
           />
         ))}
+        {query.trim() && !matchingBuildings.length && (
+          <li className="tree-empty">No buildings match this search.</li>
+        )}
         {tree.vehicles.length > 0 && (
           <TreeGroupNode
             id="vehicles"
@@ -92,12 +122,24 @@ function SimulationTree({
             onToggle={onToggle}
           />
         )}
-        {tree.other.length > 0 && (
+        {references.length > 0 && (
+          <TreeGroupNode
+            id="references"
+            label="References"
+            icon={GitCompareArrows}
+            items={references}
+            selectedItem={selectedItem}
+            expanded={expanded}
+            onSelectItem={onSelectItem}
+            onToggle={onToggle}
+          />
+        )}
+        {other.length > 0 && (
           <TreeGroupNode
             id="other"
             label="Other"
             icon={FileSpreadsheet}
-            items={tree.other}
+            items={other}
             selectedItem={selectedItem}
             expanded={expanded}
             onSelectItem={onSelectItem}

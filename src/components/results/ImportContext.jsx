@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { SOURCE } from "../../results/quality.js";
-import { metadataSummary } from "../../results/context.js";
 
 export function DataTable({ table, initialIndex = 0, showLocations = false }) {
   const [page, setPage] = useState(Math.floor(initialIndex / 50)),
@@ -45,7 +44,9 @@ export function DataTable({ table, initialIndex = 0, showLocations = false }) {
                 </>
               )}
               {table.columns.map((c) => (
-                <th key={c}>{c}</th>
+                <th key={c}>
+                  {Object.hasOwn(table.columnLabels || {}, c) ? table.columnLabels[c] : c}
+                </th>
               ))}
             </tr>
           </thead>
@@ -110,147 +111,6 @@ export function DataTable({ table, initialIndex = 0, showLocations = false }) {
         )}
       </div>
     </div>
-  );
-}
-const show = (value) =>
-  value === null || value === undefined
-    ? "Not exported"
-    : typeof value === "boolean"
-      ? value
-        ? "Yes"
-        : "No"
-      : String(value);
-
-export function ImportContext({ simulation }) {
-  const [open, setOpen] = useState(false),
-    [raw, setRaw] = useState(false);
-  const meta = simulation.metadata || {},
-    summary = metadataSummary(meta),
-    has = Boolean(meta.manifest || meta.service || meta.robustness);
-  const fields = [
-    ["Simulator version", summary.simulatorVersion],
-    ["Time step (seconds)", summary.secondsPerStep],
-    [
-      "Observation window (global steps)",
-      summary.startStep !== null && summary.endStep !== null
-        ? `${summary.startStep}–${summary.endStep}`
-        : null,
-    ],
-    ["Executed intervals", summary.completedIntervals],
-    ["Timezone", summary.timezone],
-    ["Random seed", summary.seed],
-    ["BAU definition", summary.referenceDefinition],
-    ["BAU evaluated", summary.referenceEvaluated],
-    ["Observation interface", summary.observationInterface],
-    ["Declared member catalogue", summary.declaredMembers],
-    ["Appliance service definition", summary.serviceDefinition],
-    ["Appliance service population", summary.servicePopulation],
-    ["Robustness definition", summary.robustnessDefinition],
-    ["Robustness coverage unit", summary.robustnessCoverageUnit],
-  ];
-  return (
-    <details
-      className="panel import-context"
-      onToggle={(event) => setOpen(event.currentTarget.open)}
-    >
-      <summary>
-        Export context{" "}
-        <span>
-          {has ? "Metadata available" : "Metadata not exported"} ·{" "}
-          {(simulation.formats || ["csv"]).join(", ")}
-        </span>
-      </summary>
-      {open && (
-        <div className="import-context-body">
-          <p>
-            Context is reported by the imported files. Missing metadata does not prevent inspection.
-          </p>
-          <dl>
-            {fields.map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{show(value)}</dd>
-              </div>
-            ))}
-          </dl>
-          {summary.sourceFingerprint && (
-            <p>
-              Source fingerprint: <code>{summary.sourceFingerprint}</code>
-            </p>
-          )}
-          {summary.finalInventory && (
-            <details>
-              <summary>Final inventory ({summary.finalInventory.length} entries)</summary>
-              <DataTable
-                table={{
-                  rows: summary.finalInventory,
-                  columns: [...new Set(summary.finalInventory.flatMap(Object.keys))],
-                }}
-              />
-              <p>Final stored energy is an outcome; it is not an automatic monetary credit.</p>
-            </details>
-          )}
-          {summary.serviceDistrict && (
-            <details>
-              <summary>Appliance service counts and coverage</summary>
-              <pre>{JSON.stringify(summary.serviceDistrict, null, 2)}</pre>
-            </details>
-          )}
-          {summary.robustnessDistrict && (
-            <details>
-              <summary>Robustness counts and coverage</summary>
-              <pre>
-                {JSON.stringify(
-                  {
-                    district: summary.robustnessDistrict,
-                    executed_intervals: summary.robustnessExecuted,
-                  },
-                  null,
-                  2,
-                )}
-              </pre>
-            </details>
-          )}
-          {summary.observationContract && (
-            <details>
-              <summary>Observation access contract</summary>
-              <pre>{JSON.stringify(summary.observationContract, null, 2)}</pre>
-            </details>
-          )}
-          {simulation.warnings?.length > 0 && (
-            <div role="status">
-              <strong>Import notes</strong>
-              <ul>
-                {simulation.warnings.slice(0, 20).map((w, i) => (
-                  <li key={i}>{w}</li>
-                ))}
-              </ul>
-              {simulation.warnings.length > 20 && (
-                <p>Further issues are available in Data quality.</p>
-              )}
-            </div>
-          )}
-          {simulation.kpis && (
-            <details>
-              <summary>Imported KPI values</summary>
-              <DataTable table={simulation.kpis} />
-            </details>
-          )}
-          {simulation.tables?.map((t, i) => (
-            <details key={i}>
-              <summary>{t.label}</summary>
-              <DataTable table={t} />
-            </details>
-          ))}
-          {has && (
-            <details onToggle={(event) => setRaw(event.currentTarget.open)}>
-              <summary>Imported metadata details</summary>
-              {raw && <pre>{JSON.stringify(meta, null, 2)}</pre>}
-            </details>
-          )}
-        </div>
-      )}
-    </details>
   );
 }
 export function ComparisonContext({ assessment }) {

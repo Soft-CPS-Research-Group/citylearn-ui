@@ -9,23 +9,6 @@ export function baseName(path) {
   return parts[parts.length - 1] || "Simulation";
 }
 
-export function slugify(value) {
-  return String(value || "simulation")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-export function hashText(input) {
-  let hash = 0;
-  const text = String(input || "");
-  for (let index = 0; index < text.length; index += 1) {
-    hash = (hash << 5) - hash + text.charCodeAt(index);
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(36);
-}
-
 export function trimSimulationPrefix(relativePath, simulationPath) {
   const normalizedPath = normalizePath(relativePath);
   const normalizedSimulationPath = normalizePath(simulationPath);

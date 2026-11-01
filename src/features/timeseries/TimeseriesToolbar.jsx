@@ -3,6 +3,7 @@ import { unique } from "../../utils/collections.js";
 import { getActiveQuickRange, formatDateInput, parseDateInput, endOfDay } from "./chart-utils.js";
 import { toNumber, isFiniteNumber } from "../../results/values.js";
 import { formatInterval } from "../../results/temporal.js";
+import { clockLabel } from "./chart-presentation.js";
 
 function TimeseriesToolbar({
   range,
@@ -73,7 +74,7 @@ function TimeseriesToolbar({
             </button>
           ))}
         </div>
-        <small className="timeline-basis">{timeline.basis}</small>
+        <small className="timeline-basis">{clockLabel(timeline)}</small>
       </div>
       <div className="timeseries-toolbar-right">
         <div className="timeseries-date-row">

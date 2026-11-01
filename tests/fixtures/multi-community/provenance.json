@@ -1,0 +1,13 @@
+{
+  "source": "MultiCommunityEnv.evaluate_v2 from CPS Simulator, with deterministic north/south stub child KPI frames; no physical simulation",
+  "values": {
+    "north": 80,
+    "south": 120,
+    "portfolio": 200
+  },
+  "purpose": "Long KPI community_id/level/name identities and equivalent CSV/Parquet decoding",
+  "files": {
+    "exported_kpis_multi_community.csv": "9b8c90a4a078628fe77968ce09f3acb0ee960f610427e73228719bba9832a4e0",
+    "exported_kpis_multi_community.parquet": "a8eb586e4d538a83c612b964afecc922feedb452727ae1c404ab3e64f3413cef"
+  }
+}

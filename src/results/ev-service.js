@@ -21,7 +21,12 @@ export const EV_SERVICE_DEFINITIONS = [
   },
 ];
 export const isEvService = (id) => EV_SERVICE_DEFINITIONS.some((d) => d.id === id);
-const aliases = (suffix) => [`district_${suffix}`, `building_${suffix}`, suffix];
+const aliases = (suffix) => [
+  `district_${suffix}`,
+  `building_${suffix}`,
+  `portfolio_${suffix}`,
+  suffix,
+];
 const rate = (value) => isFiniteNumber(value) && value >= 0 && value <= 1;
 const count = (value) => (Number.isSafeInteger(value) && value >= 0 ? value : null);
 

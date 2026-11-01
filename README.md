@@ -36,32 +36,27 @@ exported absolute costs when available. Mixed measures remain visible without an
 automatic best/delta. A bare legacy `cost` column retains its reported value without
 assuming a currency or reference.
 
-EV service cards identify their denominator: observed feasible departures,
-observed departures, or the legacy counted/feasible population. Target attainment
-is distinct from minimum acceptable service. Available counts and service/feasibility
-coverage are shown alongside the rate. Missing coverage remains explicitly unknown;
-zero departures or zero evaluable departures are not presented as a failed 0% rate.
-"No EVs" is used only with an explicit zero vehicle count, not inferred from missing
-files. Different criteria/denominators and known coverage gaps are not assigned an
-automatic winner. Historical same-basis rates remain comparable without requiring
-new files; a neutral label identifies the highest reported rate when pairing context
-is unknown. Differences are
-percentage points. Cards format fractional rates as percentages; the raw KPI table
-keeps their exported numeric values and labels them as fractions.
+KPI cards show the metric name and final value with its unit. The service criterion
+remains part of the metric name. Target attainment and minimum acceptable service
+stay distinct; zero departures are not presented as a failed 0% rate. Fractional
+rates are formatted as percentages, while grouped KPI tables retain the exported
+numeric values. Comparison calculations still check denominators, coverage and
+pairing context before assigning an automatic winner.
 
 Parquet decoding runs locally using [hyparquet](https://github.com/hyparam/hyparquet)
 and its [compression codecs](https://github.com/hyparam/hyparquet-compressors); no files
 are uploaded. Numbered native parts are joined in order. If CSV and Parquet copies
 coexist, CSV is used for charts and alternative data remains available as a table,
 without counting equipment or energy twice. Unrecognised tables remain inspectable.
-Long KPI rows retain their original rows and columns alongside the adapted scorecard.
+Long KPI rows feed the adapted scorecard and the grouped numeric drill-down.
 
 Optional sibling `*.manifest.json`, `*.deferrable_service.json` and `*.robustness.json`
 files add export context: version, resolution, executed duration, BAU definition,
 final inventory and available service/robustness coverage. Standalone `manifest.json`,
 `service.json` and `robustness.json` are also supported. Missing or malformed optional
-metadata does not prevent inspecting valid data. **Export context** exposes raw KPI
-values, metadata and import notes; other tables include pagination and a chart option.
+metadata does not prevent inspecting valid data. Metadata is used internally for
+clocks and comparison checks; the main results view does not display context or
+data-quality inspectors. Series source tables include pagination.
 
 Comparisons distinguish matching declared experiment contexts, known differences and
 unknown context. Automatic best/improvement styling requires both metric compatibility
@@ -73,6 +68,22 @@ service outcomes may differ between controllers; their initial conditions and se
 definitions must match. Original entity IDs remain distinct, including names that
 would collide after punctuation or case normalisation.
 
+### File and multi-community identities
+
+Equipment selection uses the complete source-file identity, including path, size and
+modification time; short 32-bit hashes are not used as unique identities. Folder
+fingerprints are deterministic across file-picker ordering. Web Crypto keeps folder
+IDs compact where available; a full tuple identity keeps imports working otherwise.
+
+Native consolidated multi-community long KPIs use `community_id`, `level` and `name`
+as the scope identity. Identical local names in different communities stay separate;
+legitimate scopes at different levels also stay separate. Scope labels retain the
+community/name/level and source tables retain the original columns and rows. Portfolio
+values are read from the export, not inferred by summing local rows or averaging rates.
+Duplicate records within the same qualified scope remain diagnosed and excluded.
+Declared scopes with unavailable values remain selectable as unknown. Old wide and
+long files without `community_id` retain their existing scope interpretation.
+
 ### Time and reconstructed community data
 
 ISO timestamps with offsets identify absolute instants. Charts and date filters show
@@ -80,7 +91,7 @@ these in **UTC**, including distinct instants when a local clock repeats at DST.
 A naive timestamp uses a declared timezone when it identifies a unique instant;
 without a timezone, it keeps the exported wall clock and is labelled accordingly.
 Ambiguous, invalid or incompatible clocks retain all source rows on an explicit row
-axis, with a note. The browser's timezone never supplies a missing export timezone.
+axis. The short clock label identifies UTC, local time, elapsed time, step or row. The browser's timezone never supplies a missing export timezone.
 
 Numeric `time_step`, `episode_time_step`, `step` and `index` fields are episode
 indices; `global_step` and `global_time_step` are global indices. Optional native
@@ -103,9 +114,9 @@ energy signs. An optional native member catalogue and topology schedule distingu
 absence from missing active-member data; without membership evidence, values are
 labelled as known subtotals. Missing channels stay unknown, and an unsupported channel
 is not invented as zero. Repeated member coordinates are ambiguous contributions and
-are excluded from the reconstructed subtotal with a note; original source rows remain
+are excluded from the reconstructed subtotal; original member source rows remain
 available. Declared inactive rows conflicting with observations are flagged and their
-reported values retained. Partial coverage stays explicit after chart aggregation.
+reported values retained. Partial coverage is retained internally after chart aggregation.
 The membership schedule describes supplied evidence, not an independently verified
 record that every planned event succeeded.
 
@@ -115,19 +126,17 @@ work does not perform resampling or allocate coarse interval energy to finer sam
 
 ### Data quality and partial imports
 
-**Data quality** shows file/relative path, logical data record, column, original
-sample value and calculation impact. Issues are searchable and paginated. Counts
-cover all occurrences; repeated cell issues show up to five examples, and every
-source record remains accessible. **Inspect source** jumps to the relevant page;
-record numbers exclude the header and treat a quoted multiline value as one record.
+Import validation retains issue locations, original samples and calculation impact
+internally. The UI omits diagnostic panels and per-chart coverage explanations;
+individual series source tables remain available.
 
 CSV records with a wrong field count or malformed quoting are retained but excluded
 from calculations. Extra fields remain visible. Empty/duplicate headers preserve
-values under explicit inspection labels and expose the original CSV text; ambiguous
+values under explicit column labels; ambiguous
 headers are not used to guess a chart or scorecard. Empty tables do not generate zero
 measurements. A failed file or folder does not erase other valid imports; an unreadable
-result can still provide diagnostics. Optional invalid metadata does not prevent
-reading data, and its original text can be inspected.
+result does not remove other imports. Optional invalid metadata does not prevent
+reading valid data.
 
 Distinct KPI identities survive other invalid/duplicate records. All occurrences of
 an ambiguous identity are excluded, rather than averaged or selected arbitrarily;
@@ -135,8 +144,8 @@ original rows remain accessible. Long entity names, including numeric-looking ID
 are identities rather than numeric measurements. Invalid numeric KPI values remain
 visible as source values and qualify the comparison context.
 
-Charts distinguish complete values among supplied samples, partial data and unknown
-signals. Missing, non-finite and filtered inputs are counted separately from genuine
+Chart calculations distinguish complete values among supplied samples, partial data
+and unknown signals. Missing, non-finite and filtered inputs are counted separately from genuine
 zero. Sums of incomplete data are known subtotals; means use available values. With
 a declared cadence, coverage counts grid positions in the selected span; otherwise
 interval population remains unknown. Unrepresented positions are not filled with
@@ -148,7 +157,7 @@ reconstructed community, including exclusions at its recorded boundaries.
 Derived battery/charger channels retain their sign and disconnected-state conventions.
 A charger with both energy inputs unavailable has unknown energy, rather than a
 fabricated measured zero; one available input gives a qualified subtotal. Per-signal
-input availability is exposed without changing simulator physics or exported values.
+input availability is retained without changing simulator physics or exported values.
 File quality describes imported evidence and is not independent physical calibration
 or proof that all experiment records were exported. Large-scale import performance
 remains a separate validation stage.
@@ -168,16 +177,13 @@ size limit. Capacity depends on available device memory, row/column counts and e
 layout. Background reading keeps parsing separate from the screen, but transferring
 large results and calculating views still require memory and processing time.
 
-Above 800 selected interval aggregates, equipment charts draw an explicitly labelled
-overview of actual points. It retains endpoints and per-signal minima/maxima in each
-sampling group, with representative missing-value positions. Gaps can be summarised;
-zoom into a shorter period to inspect exact timing. This selection does not change
-source rows, KPI values, the chosen interval aggregation or data-quality calculations.
-Do not sum the drawn subset: the overview details provide known energy totals from
-**all selected intervals**, together with minima/maxima of those interval aggregates.
-Coarse SOC/power aggregation still follows the selected mean/state rule; this drawing
-step does not undo that prior aggregation. Connection overlays also state when their
-event/period drawing is simplified; all source events remain accessible.
+Above 800 selected interval aggregates, equipment charts reduce drawing to actual
+points, retaining endpoints and per-signal minima/maxima in each sampling group,
+with representative missing-value positions. Zoom into a shorter period to inspect
+exact timing. This selection does not change source rows, KPI values or interval
+aggregation. Energy totals use all selected intervals, never just the drawn subset.
+Coarse SOC/power aggregation follows the selected mean/state rule. Connection
+overlays can simplify drawing while retaining all source events.
 
 Source tables retain all records and support a direct page number and **Last rows**,
 so long periods do not require stepping through hundreds of pages.
@@ -239,7 +245,7 @@ outside the checkout. Browser tests need an available local port 3177.
 - `src/results/`: format adapters, identity, clocks, coverage, aggregation, costs,
   EV service, KPI definitions, scorecards and comparison models; no presentation imports.
 - `src/features/`: timeseries, KPI and comparison views, with chart selection helpers.
-- `src/components/`: shared navigation, footer, source inspection and quality panels.
+- `src/components/`: shared navigation, footer, source tables and comparison context.
 - `src/utils/`: shared collection helpers.
 
 Architecture checks reject missing relative imports, dependency cycles, unreachable

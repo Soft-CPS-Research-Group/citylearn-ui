@@ -81,20 +81,21 @@ test.beforeAll(() => {
 test.afterAll(() => {
   if (root) fs.rmSync(root, { recursive: true, force: true });
 });
-test("two years draw a bounded overview with full-span extrema, exact totals and direct source pagination", async ({
+test("two years retain bounded rendering, full-span extrema, exact totals and source pagination", async ({
   page,
 }) => {
   await load(page, "long");
   await page.getByRole("button", { name: "All", exact: true }).click();
-  const overview = page.locator(".chart-overview");
+  const overview = page.locator(".equipment-card.sim-chart").first();
   await expect(overview).toHaveAttribute("data-original-points", "70176");
   expect(Number(await overview.getAttribute("data-drawn-points"))).toBeLessThanOrEqual(800);
   expect(await page.locator(".recharts-bar-rectangle").count()).toBeLessThan(2500);
-  await overview.locator("summary").click();
-  const energy = overview.locator('[data-overview-field="Net Electricity Consumption-kWh"]');
-  await expect(energy.locator("[data-total]")).toHaveAttribute("data-total", "70774");
-  await expect(energy).toContainText("-400");
-  await expect(energy).toContainText("1,000");
+  const stats = JSON.parse(await overview.getAttribute("data-series-stats"));
+  const energy = stats.find((s) => s.field === "Net Electricity Consumption-kWh");
+  expect(energy.total).toBe(70774);
+  expect(energy.min).toBe(-400);
+  expect(energy.max).toBe(1000);
+  await expect(page.locator(".chart-overview")).toHaveCount(0);
   await page.locator(".source-rows > summary").click();
   const source = page.locator(".source-rows");
   await source.getByRole("spinbutton", { name: "Table page" }).fill("1404");
@@ -191,7 +192,10 @@ test("repeated large import/removal releases selected series and workers", async
     await expect(page.locator(".simulation-row")).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Cancel import", exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: "All", exact: true }).click();
-    await expect(page.locator(".chart-overview")).toBeVisible();
+    await expect(page.locator(".equipment-card.sim-chart")).toHaveAttribute(
+      "data-original-points",
+      "70176",
+    );
     await page.getByRole("button", { name: "Remove long", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Import CityLearn simulation folders", exact: true }),

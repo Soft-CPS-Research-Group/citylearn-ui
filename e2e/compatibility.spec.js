@@ -29,7 +29,7 @@ function clone(name, source) {
 async function load(page, name) {
   await page.goto("/");
   await page.locator("input[type=file]").setInputFiles(path.join(root, name));
-  await expect(page.locator(".data-quality").first()).toBeVisible();
+  await expect(page.locator(".simulation-row").first()).toBeVisible();
 }
 const csv = (control, reference) =>
   `KPI,District\ndistrict_cost_total_control_eur,${control}\n${reference === undefined ? "" : `district_cost_total_business_as_usual_eur,${reference}\n`}`;
@@ -73,15 +73,17 @@ for (const [name, id] of [
     await node.locator("..").getByRole("button", { name: "Battery", exact: true }).click();
     await expect(page.getByRole("heading", { name: /Battery Data$/ })).toBeVisible();
   });
-test("long KPI exports retain their original rows", async ({ page }) => {
+test("long KPI exports retain their values in the compact view and grouped table", async ({
+  page,
+}) => {
   await load(page, "long");
   await page.getByRole("tab", { name: "KPIs", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Decision scorecard" })).toBeVisible();
-  await page.locator(".import-context > summary").click();
-  await page.getByText("Original long KPI rows", { exact: true }).click();
-  await expect(
-    page.locator(".import-context table").filter({ hasText: "cost_function" }),
-  ).toBeVisible();
+  await expect(page.locator(".kpi-priority-tile").first()).toContainText("-3.568 EUR");
+  await page.getByRole("button", { name: /All KPI drill-down/ }).click();
+  await page.getByPlaceholder("Search KPI...").fill("cost total");
+  await page.locator(".kpi-family-summary").first().click();
+  await page.locator(".kpi-subfamily-accordion > summary").first().click();
+  await expect(page.locator(".kpi-reference-table")).toContainText("7.375");
 });
 test("cost comparison without metadata stays descriptive and uses lower absolute costs", async ({
   page,
@@ -119,14 +121,16 @@ test("indices without a calendar remain relative and editable", async ({ page })
     "index",
   );
 });
-test("malformed records retain their source and qualify the chart", async ({ page }) => {
+test("malformed records remain in source rows without affecting the plot", async ({ page }) => {
   await load(page, "quality");
-  const panel = page.locator(".data-quality").first();
-  await panel.locator(":scope > summary").click();
-  await panel.getByRole("searchbox", { name: "Filter quality issues" }).fill("field-count");
-  await panel.getByRole("button", { name: "Record 2", exact: true }).click();
-  await expect(panel.locator(".quality-source")).toContainText("extra");
-  await expect(page.locator(".chart-quality")).toHaveAttribute("data-quality-status", "partial");
+  await page.getByTitle("A", { exact: true }).click();
+  const plot = page.locator(".equipment-card.sim-chart").first();
+  const stats = JSON.parse(await plot.getAttribute("data-series-stats"));
+  expect(stats.find((s) => s.field === "Net Electricity Consumption-kWh").total).toBe(4);
+  await page.locator(".source-rows > summary").click();
+  await expect(page.locator(".source-rows tbody tr")).toHaveCount(3);
+  await expect(page.locator(".source-rows tbody tr").nth(1)).toContainText("100");
+  await expect(page.locator(".chart-quality, .result-details")).toHaveCount(0);
 });
 test("a later unreadable folder preserves a valid imported simulation", async ({ page }) => {
   await load(page, "cps");
@@ -138,13 +142,12 @@ test("a later unreadable folder preserves a valid imported simulation", async ({
     .click();
   await expect(page.getByTitle("member_001", { exact: true })).toBeVisible();
 });
-test("mobile source-quality inspection stays within the viewport", async ({ page }) => {
+test("mobile source rows stay accessible without technical notices", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await load(page, "quality");
-  const panel = page.locator(".data-quality").first();
-  await panel.locator(":scope > summary").click();
-  await panel.getByRole("searchbox", { name: "Filter quality issues" }).fill("field-count");
-  await panel.getByRole("button", { name: "Inspect source", exact: true }).click();
-  await expect(panel.locator(".quality-source")).toBeVisible();
+  await page.getByTitle("A", { exact: true }).click();
+  await page.locator(".source-rows > summary").click();
+  await expect(page.locator(".source-rows tbody tr")).toHaveCount(3);
   expect(await page.evaluate(() => document.body.scrollWidth)).toBe(390);
+  await expect(page.locator(".data-quality, .chart-quality, .result-details")).toHaveCount(0);
 });

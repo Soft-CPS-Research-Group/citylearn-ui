@@ -41,7 +41,7 @@ function buildCompareKpiScopes(simulations) {
   });
 
   return [...scopesById.values()].sort((left, right) => {
-    const order = { community: 0, building: 1, other: 2 };
+    const order = { portfolio: -1, community: 0, building: 1, other: 2 };
     const groupOrder = order[left.group] - order[right.group];
     if (groupOrder !== 0) return groupOrder;
     return compareNatural(left.label, right.label);
@@ -49,6 +49,7 @@ function buildCompareKpiScopes(simulations) {
 }
 
 function getCompareScopeGroup(scope) {
+  if (scope.group) return scope.group;
   if (scope.id === "community") return "community";
   if (/building|house|site|asset/i.test(`${scope.id} ${scope.label}`)) return "building";
   return "other";

@@ -1,3 +1,4 @@
+import { qualifiedScopeLabel } from "./kpi-identities.js";
 import {
   isFiniteNumber,
   toNumber,
@@ -19,6 +20,31 @@ function buildKpiScopes(kpis) {
   const numericColumns = kpis.columns
     .filter((column) => column !== kpis.labelKey)
     .filter((column) => kpis.rows.some((row) => isFiniteNumber(toNumber(row[column]))));
+  if (kpis.scopeIdentities) {
+    const groups = {
+      portfolio: "portfolio",
+      district: "community",
+      community: "community",
+      building: "building",
+    };
+    const group = (level) =>
+      Object.hasOwn(groups, level.toLowerCase()) ? groups[level.toLowerCase()] : "other";
+    const order = { portfolio: 0, community: 1, building: 2, other: 3 };
+    return kpis.columns
+      .filter((column) => column !== kpis.labelKey && Object.hasOwn(kpis.scopeIdentities, column))
+      .map((column) => {
+        const entity = kpis.scopeIdentities[column];
+        return {
+          id: `qualified:${column}`,
+          column,
+          label: qualifiedScopeLabel(entity),
+          group: group(entity.level),
+          qualified: true,
+          identity: entity,
+        };
+      })
+      .sort((a, b) => order[a.group] - order[b.group] || compareNatural(a.label, b.label));
+  }
   const declaredLevels = numericColumns.some((column) => typeof kpis.levels?.[column] === "string");
   const communityColumn = declaredLevels
     ? numericColumns.find((column) =>
@@ -228,7 +254,9 @@ function findKpiCandidate(rows, candidates) {
 }
 
 function rowMatchesKpiCandidate(row, candidateKey) {
-  const normalizedLabel = normalizeColumnName(row.label);
+  const normalizedLabel = normalizeColumnName(
+    String(row.label).replace(/^portfolio_/i, "district_"),
+  );
   const normalizedCandidate = normalizeColumnName(candidateKey);
   if (!normalizedLabel || !normalizedCandidate) return false;
 

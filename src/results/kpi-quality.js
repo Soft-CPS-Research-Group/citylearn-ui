@@ -1,3 +1,4 @@
+import { longKpiIdentity } from "./kpi-identities.js";
 import { adaptKpis } from "./tabular.js";
 import { isExcluded, issue, sample, SOURCE } from "./quality.js";
 
@@ -42,14 +43,12 @@ export function recoverKpis(table, fileName) {
       levels = new Map(),
       badEntities = new Set();
     const key = (row) =>
-      long
-        ? JSON.stringify([row[field("name")], row[field("cost_function")]])
-        : String(row[labelKey] ?? "").trim();
+      long ? longKpiIdentity(row, columns).metricKey : String(row[labelKey] ?? "").trim();
     for (const row of eligible) {
       const k = key(row);
       identities.set(k, (identities.get(k) || 0) + 1);
       if (long && field("level")) {
-        const name = row[field("name")],
+        const name = longKpiIdentity(row, columns).entityKey,
           level = row[field("level")];
         if (levels.has(name) && levels.get(name) !== level) badEntities.add(name);
         levels.set(name, level);
@@ -59,9 +58,8 @@ export function recoverKpis(table, fileName) {
       diagnostics = [];
     for (const row of eligible) {
       const invalid = long
-        ? !String(row[field("name")] ?? "").trim() ||
-          !String(row[field("cost_function")] ?? "").trim() ||
-          badEntities.has(row[field("name")])
+        ? longKpiIdentity(row, columns).invalid ||
+          badEntities.has(longKpiIdentity(row, columns).entityKey)
         : !key(row);
       if (invalid || identities.get(key(row)) > 1) {
         diagnostics.push(

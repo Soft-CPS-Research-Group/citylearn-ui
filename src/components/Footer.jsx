@@ -30,12 +30,6 @@ function Footer() {
       src: "/logos/PRD_PDQI(1).png",
       className: "footer-logo-prd",
     },
-    {
-      href: "https://www.i-charging.pt/",
-      label: "i-charging",
-      src: "/logos/logo_i_charging_dark.png",
-      className: "footer-logo-icharging",
-    },
   ];
 
   return (

@@ -1,3 +1,4 @@
+import { sourceIdentity, simulationIdentity } from "./identity.js";
 import { analyzeTable, issue, isExcluded } from "./quality.js";
 import { recoverKpis } from "./kpi-quality.js";
 import { temporalContext, inspectClock } from "./temporal.js";
@@ -12,8 +13,6 @@ import {
 import {
   normalizePath,
   baseName,
-  slugify,
-  hashText,
   trimSimulationPrefix,
   findTimeKey,
   extractEpisode,
@@ -79,7 +78,11 @@ function normalizeSeries(entry, group, table) {
   const clean = relative.replace(/\.(?:csv|parquet|pq|parq)$/i, "");
   const timeKey = findTimeKey(table.columns);
   return {
-    id: hashText(`${entry.relativePath}:${entry.file.size}:${entry.file.lastModified}`),
+    id: sourceIdentity("series", [
+      entry.relativePath,
+      entry.file.size ?? null,
+      entry.file.lastModified ?? null,
+    ]),
     fileName: entry.fileName,
     relativePath: relative,
     resultKey: normalizeMatchKey(clean),
@@ -313,11 +316,14 @@ export async function parseResultFolder(group, options = {}) {
   // Manifest references are evidence, not paths to fetch or execute.
   const fingerprint = group.entries
     .filter((e) => isTableFile(e.fileName) || metadataFile(e.fileName))
-    .map((e) => `${e.relativePath}:${e.file.size}:${e.file.lastModified}`)
-    .sort()
-    .join("|");
+    .map((e) => [e.relativePath, e.file.size ?? null, e.file.lastModified ?? null])
+    .sort((a, b) => {
+      const x = JSON.stringify(a),
+        y = JSON.stringify(b);
+      return x < y ? -1 : x > y ? 1 : 0;
+    });
   return {
-    id: `${slugify(group.name)}-${hashText(fingerprint || group.path)}`,
+    id: await simulationIdentity(group.path, fingerprint),
     name: group.name,
     path: group.path,
     importedAt: new Date().toISOString(),

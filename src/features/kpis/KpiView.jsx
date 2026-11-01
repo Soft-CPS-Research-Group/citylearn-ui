@@ -4,7 +4,6 @@ import {
   getAllKpiRowsForScope,
   getKpiReferenceSummary,
   buildKpiScorecard,
-  resolveKpiComparison,
   formatKpiScorecardValue,
 } from "../../results/kpi-scorecard.js";
 import { isFiniteNumber, formatNumber } from "../../results/values.js";
@@ -16,7 +15,6 @@ import {
 } from "../../results/kpi-drilldown.js";
 import { Table2, Search } from "lucide-react";
 import { KpiScopeTree } from "./KpiScopeTree.jsx";
-import { EvServiceEvidence } from "./EvServiceEvidence.jsx";
 import { resolveKpiFamilyIcon } from "./icons.js";
 
 function KpiView({ simulation }) {
@@ -86,48 +84,23 @@ function KpiView({ simulation }) {
           <header className="kpi-section-header">
             <div>
               <h3>Decision scorecard</h3>
-              <small>
-                {selectedScope?.label || "Community"} - cost, EV service, battery behaviour, grid
-                safety and solar use
-              </small>
+              <small>{selectedScope?.label || "Community"}</small>
             </div>
             <span className="kpi-family-pill">{referenceSummary}</span>
           </header>
 
           <div className="kpi-priority-grid">
-            {scorecard.prioritySignals.map((signal) => {
-              const comparison = resolveKpiComparison(signal);
-              const showComparisonContext = signal.referenceMode !== "none";
-              const toneLabel = formatToneLabel(comparison.tone);
-              return (
-                <article
-                  className={`kpi-priority-tile tone-${comparison.tone}${signal.reported ? "" : " is-missing"}`}
-                  key={signal.id}
-                >
-                  <header>
-                    <small>{signal.title}</small>
-                    {toneLabel && (
-                      <span className={`kpi-tone kpi-tone-${comparison.tone}`}>{toneLabel}</span>
-                    )}
-                  </header>
-                  <strong>{formatKpiScorecardValue(signal)}</strong>
-                  {showComparisonContext && (
-                    <dl className="kpi-priority-context">
-                      <div>
-                        <dt>{comparison.policyLabel}</dt>
-                        <dd>{comparison.policy}</dd>
-                      </div>
-                      <div className={comparison.hasReference ? "" : "is-missing"}>
-                        <dt>{comparison.referenceLabel}</dt>
-                        <dd>{comparison.reference}</dd>
-                      </div>
-                    </dl>
-                  )}
-                  <p>{signal.description}</p>
-                  <EvServiceEvidence signal={signal} />
-                </article>
-              );
-            })}
+            {scorecard.prioritySignals.map((signal) => (
+              <article
+                className={`kpi-priority-tile${signal.reported ? "" : " is-missing"}`}
+                key={signal.id}
+              >
+                <header>
+                  <small>{signal.title}</small>
+                </header>
+                <strong>{formatKpiScorecardValue(signal)}</strong>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -136,10 +109,6 @@ function KpiView({ simulation }) {
             <header className="kpi-section-header">
               <div>
                 <h3>Selected KPIs</h3>
-                <small>
-                  Expanded scorecard for cost, EV service, grid safety, battery throughput, V2G,
-                  solar and grid shape.
-                </small>
               </div>
               <span className="kpi-family-pill">
                 {scorecard.reportedCount}/{scorecard.selectedSignals.length} reported
@@ -147,51 +116,19 @@ function KpiView({ simulation }) {
             </header>
 
             <div className="kpi-focus-list">
-              {scorecard.selectedSignals.map((signal) => {
-                const comparison = resolveKpiComparison(signal);
-                const showComparisonContext = signal.referenceMode !== "none";
-                const toneLabel = formatToneLabel(comparison.tone);
-                return (
-                  <div
-                    className={`kpi-focus-row tone-${comparison.tone}${showComparisonContext ? "" : " is-absolute"}${signal.reported ? "" : " is-missing"}`}
-                    key={signal.id}
-                  >
-                    <div className="kpi-focus-row-main">
-                      <strong>{signal.title}</strong>
-                      <small>{signal.description}</small>
-                      <EvServiceEvidence signal={signal} />
-                    </div>
-                    {showComparisonContext ? (
-                      <>
-                        <div className="kpi-compare-cell">
-                          <small>{comparison.policyLabel}</small>
-                          <strong>{comparison.policy}</strong>
-                        </div>
-                        <div
-                          className={`kpi-compare-cell ${comparison.hasReference ? "" : "is-missing"}`}
-                        >
-                          <small>{comparison.referenceLabel}</small>
-                          <strong>{comparison.reference}</strong>
-                        </div>
-                        <div className="kpi-compare-cell">
-                          <small>{comparison.deltaLabel}</small>
-                          <strong>{comparison.delta}</strong>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="kpi-compare-cell kpi-final-cell">
-                        <small>Value</small>
-                        <strong>{formatKpiScorecardValue(signal)}</strong>
-                      </div>
-                    )}
-                    <div className="kpi-focus-row-value">
-                      {toneLabel ? (
-                        <span className={`kpi-tone kpi-tone-${comparison.tone}`}>{toneLabel}</span>
-                      ) : null}
-                    </div>
+              {scorecard.selectedSignals.map((signal) => (
+                <div
+                  className={`kpi-focus-row is-compact${signal.reported ? "" : " is-missing"}`}
+                  key={signal.id}
+                >
+                  <div className="kpi-focus-row-main">
+                    <strong>{signal.title}</strong>
                   </div>
-                );
-              })}
+                  <div className="kpi-final-cell">
+                    <strong>{formatKpiScorecardValue(signal)}</strong>
+                  </div>
+                </div>
+              ))}
             </div>
           </article>
         </section>
@@ -205,7 +142,6 @@ function KpiView({ simulation }) {
           >
             <span>
               <strong>All KPI drill-down</strong>
-              <small>Complete grouped KPI table for the selected scope.</small>
             </span>
             <span className="kpi-family-pill">{visibleDrilldownCount} KPIs</span>
           </button>
@@ -263,7 +199,6 @@ function KpiView({ simulation }) {
                           </span>
                           <span>
                             <strong>{familySection.label}</strong>
-                            <small>{familySection.subfamilies.length} subfamily group(s)</small>
                           </span>
                         </span>
                         <span className="kpi-family-pill">{familySection.count} KPIs</span>

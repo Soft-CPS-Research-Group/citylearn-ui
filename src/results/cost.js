@@ -79,7 +79,12 @@ const GROUPS = [
 function pick(rows, aliases) {
   for (const alias of aliases) {
     const row = rows.find(
-      (r) => normalizeColumnName(r.label) === normalizeColumnName(alias) && isFiniteNumber(r.value),
+      (r) =>
+        [
+          alias,
+          ...(alias.startsWith("district_") ? [alias.replace(/^district_/, "portfolio_")] : []),
+        ].some((key) => normalizeColumnName(r.label) === normalizeColumnName(key)) &&
+        isFiniteNumber(r.value),
     );
     if (row) return row;
   }
