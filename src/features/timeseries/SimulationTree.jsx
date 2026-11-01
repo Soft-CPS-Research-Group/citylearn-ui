@@ -6,7 +6,6 @@ import {
   ChevronDown,
   ChevronRight,
   Search,
-  GitCompareArrows,
 } from "lucide-react";
 import { useState } from "react";
 import { isBauReference } from "./chart-presentation.js";
@@ -31,9 +30,6 @@ function SimulationTree({
   const matchingBuildings = tree.buildings.filter((building) =>
     `${building.id} ${building.label}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
-  const references = tree.other
-    .filter(isBauReference)
-    .map((item) => ({ ...item, label: "Business as usual" }));
   const other = tree.other.filter((item) => !isBauReference(item));
   return (
     <aside className="result-tree-panel sim-tree-panel">
@@ -116,18 +112,6 @@ function SimulationTree({
             label="Pricing"
             icon={CircleDollarSign}
             items={tree.pricing}
-            selectedItem={selectedItem}
-            expanded={expanded}
-            onSelectItem={onSelectItem}
-            onToggle={onToggle}
-          />
-        )}
-        {references.length > 0 && (
-          <TreeGroupNode
-            id="references"
-            label="References"
-            icon={GitCompareArrows}
-            items={references}
             selectedItem={selectedItem}
             expanded={expanded}
             onSelectItem={onSelectItem}

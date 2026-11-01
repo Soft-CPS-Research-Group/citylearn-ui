@@ -137,14 +137,16 @@ test("an empty window stays empty instead of showing samples outside the selecte
   await expect(page.locator(".sim-chart-canvas .recharts-wrapper")).toBeVisible();
 });
 
-test("BAU is a named reference without episode clutter or chart diagnostics", async ({ page }) => {
+test("BAU data does not add navigation clutter or a clock label beside granularity", async ({
+  page,
+}) => {
   await load(page, "reference");
   await expect(page.getByRole("button", { name: "Other", exact: true })).toHaveCount(0);
-  await page.getByRole("button", { name: "References", exact: true }).click();
-  await page.getByRole("button", { name: "Business as usual", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Business as usual", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "References", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Business as usual", exact: true })).toHaveCount(0);
+  await expect(page.locator(".timeseries-toolbar .timeline-basis")).toHaveCount(0);
   await expect(page.locator(".timeline-note")).toHaveText("Step");
   await expect(page.locator(".chart-quality, .result-details, input[type=range]")).toHaveCount(0);
   await page.getByText("Source rows", { exact: true }).click();
-  await expect(page.locator(".source-rows tbody tr")).toHaveCount(4);
+  await expect(page.locator(".source-rows tbody tr")).toHaveCount(2);
 });
