@@ -187,7 +187,7 @@ export async function parseResultFolder(group, options = {}) {
         asTable(
           incompatible.entry,
           incompatible.table,
-          "Partition with different columns — " + incompatible.entry.fileName,
+          "Separate partition — " + incompatible.entry.fileName,
         );
       if (!table.columns.length) continue;
       const combined = files.length > 1 || tableIdentity(files[0]).part !== null;

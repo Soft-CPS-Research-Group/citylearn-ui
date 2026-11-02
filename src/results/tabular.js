@@ -1,3 +1,4 @@
+import { parquetColumnTypes, PartitionSchema, fillOptionalColumns } from "./partition-schema.js";
 import { longKpiIdentity, qualifiedScopeLabel } from "./kpi-identities.js";
 import { SOURCE, EXCLUDED, issue, numericValue } from "./quality.js";
 import Papa from "papaparse";
@@ -148,8 +149,9 @@ export async function readTable(entry) {
         headerInvalid || parsed.errors.some((e) => e.type !== "Delimiter") ? text : undefined,
     };
   }
-  const [{ parquetReadObjects, parquetMetadataAsync, parquetSchema }, { compressors }] =
-    await Promise.all([import("hyparquet"), import("hyparquet-compressors")]);
+  const [{ parquetRead, parquetMetadataAsync, parquetSchema }, { compressors }] = await Promise.all(
+    [import("hyparquet"), import("hyparquet-compressors")],
+  );
   // File.slice keeps the decoder local and avoids copying the entire file just
   // to read its footer. Node/test adapters can supply an ArrayBuffer instead.
   const file =
@@ -160,8 +162,21 @@ export async function readTable(entry) {
         }
       : await entry.file.arrayBuffer();
   const metadata = await parquetMetadataAsync(file);
-  const columns = parquetSchema(metadata).children.map((c) => c.element.name);
-  const rows = (await parquetReadObjects({ file, metadata, compressors })).map(cleanRow);
+  const schema = parquetSchema(metadata).children;
+  const columns = schema.map((c) => c.element.name);
+  let decoded = [];
+  await parquetRead({
+    file,
+    metadata,
+    compressors,
+    onComplete: (values) => {
+      decoded = values;
+    },
+  });
+  // Array output keeps literal column names such as __proto__ as data keys.
+  const rows = decoded.map((values) =>
+    cleanRow(Object.fromEntries(columns.map((column, index) => [column, values[index]]))),
+  );
   for (const [index, row] of rows.entries())
     row[SOURCE] = { file: entry.fileName, path: entry.relativePath, record: index + 1 };
   const diagnostics = rows.length
@@ -180,6 +195,7 @@ export async function readTable(entry) {
     columns,
     warnings: diagnostics.map((d) => `${entry.fileName}: ${d.message}`),
     diagnostics,
+    columnTypes: parquetColumnTypes(schema),
   };
 }
 
@@ -212,12 +228,14 @@ export async function readPartitions(entries, options = {}) {
       ),
     );
   }
-  let columns = null,
-    schemaColumns = null;
+  let columns = null;
+  const accepted = [],
+    partitionSchema = new PartitionSchema();
   const rows = [],
     sources = [],
     usedParts = new Set();
-  for (const { entry, part } of parts) {
+  for (const identity of parts) {
+    const { entry, part } = identity;
     options.signal?.throwIfAborted();
     options.onFile?.(entry);
     if (options.yield) await new Promise((resolve) => setTimeout(resolve, 0));
@@ -240,12 +258,9 @@ export async function readPartitions(entries, options = {}) {
         sources.push({ entry, table, incompatible: true });
         continue;
       }
-      const schema = table.schemaColumns || table.columns;
-      if (
-        schemaColumns &&
-        (schema.length !== schemaColumns.length || schema.some((c) => !schemaColumns.includes(c)))
-      ) {
-        warnings.push(`${entry.fileName}: partition columns differ; retained as a separate table.`);
+      const conflict = partitionSchema.accept(identity, table);
+      if (conflict) {
+        warnings.push(`${entry.fileName}: ${conflict}; retained as a separate table.`);
         diagnostics.push(
           issue(
             "partition-alternative",
@@ -257,7 +272,7 @@ export async function readPartitions(entries, options = {}) {
         sources.push({ entry, table, incompatible: true });
         continue;
       }
-      schemaColumns ||= schema;
+      accepted.push({ identity, table });
       columns ||= [...table.columns];
       for (const column of table.columns) if (!columns.includes(column)) columns.push(column);
       if (part !== null) usedParts.add(part);
@@ -278,6 +293,7 @@ export async function readPartitions(entries, options = {}) {
       );
     }
   }
+  fillOptionalColumns(accepted, columns || []);
   return {
     rows,
     columns: columns || [],
