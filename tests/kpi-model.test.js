@@ -99,6 +99,44 @@ test("drill-down retains extra indicators, zero values and raw scope identity", 
   assert(entries.some((r) => r.primary === 0));
   assert(entries.some((r) => r.primary === 3));
 });
+test("drill-down infers kW for energy_grid power KPIs, kWh for EV energy, and physical BAU deltas", () => {
+  const rows = getAllKpiRowsForScope(
+    kpis({
+      district_energy_grid_window_average_power_control_kw: 6,
+      district_energy_grid_window_average_power_business_as_usual_kw: 15,
+      district_energy_grid_window_average_power_delta_to_business_as_usual_kw: -9,
+      district_energy_grid_shape_quality_peak_daily_average_control_kw: 18.5,
+      district_ev_window_net_exchange_control_kwh: -4.5,
+    }),
+    "District",
+  );
+  const sections = buildKpiDrilldownSections(rows, {
+    familyFilter: "all",
+    search: "",
+    showNa: true,
+    selectedScope: { column: "District" },
+  });
+  const entries = sections.flatMap((s) => s.subfamilies.flatMap((f) => f.rows));
+  const gridWindow = entries.find((r) => r.label === "Energy Grid Window Average Power");
+  assert(gridWindow);
+  assert.equal(gridWindow.family, "energy_grid");
+  assert.equal(gridWindow.unit, "kW");
+  assert.equal(gridWindow.control, 6);
+  assert.equal(gridWindow.reference, 15);
+  assert.equal(gridWindow.referenceLabel, "BAU");
+  assert.equal(gridWindow.delta, -9);
+  assert.equal(gridWindow.deltaPct, -60);
+
+  const gridPeak = entries.find((r) => r.label === "Energy Grid Shape Quality Peak Daily Average");
+  assert(gridPeak);
+  assert.equal(gridPeak.unit, "kW");
+
+  const evWindow = entries.find((r) => r.label === "EV Window NET Exchange");
+  assert(evWindow);
+  assert.equal(evWindow.family, "ev");
+  assert.equal(evWindow.unit, "kWh");
+  assert.equal(evWindow.primary, -4.5);
+});
 for (const name of [
   "citylearn",
   "cps-core",

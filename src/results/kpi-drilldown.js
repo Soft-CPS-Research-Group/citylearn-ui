@@ -178,10 +178,10 @@ function canonicalizeKpiGroup(label) {
   const cleaned = raw
     .replace(/\b(District|Building|Community)\b/gi, "")
     .replace(
-      /\b(Control|Policy|Trained|Baseline|Reference|Business|Usual|BAU|Delta|Saving|Savings|Ratio|To)\b/gi,
+      /\b(Control|Policy|Trained|Baseline|Reference|Business\s+As\s+Usual|Business|Usual|BAU|Delta|Saving|Savings|Ratio|To)\b/gi,
       "",
     )
-    .replace(/\b(EUR|KWH|KG|CO2|Percent|Percentage|Rate)\b/gi, "")
+    .replace(/\b(EUR|KWH|KW|KG|CO2|Percent|Percentage|Rate)\b/gi, "")
     .replace(/\s+/g, " ")
     .trim();
   const labelText = cleaned || raw || "KPI";
@@ -220,7 +220,7 @@ function classifyKpiSubfamily(label) {
     return { key: "service", label: "Service" };
   if (/throughput|cycle/.test(lower)) return { key: "throughput", label: "Throughput" };
   if (/violation|phase|voltage/.test(lower)) return { key: "violations", label: "Violations" };
-  if (/baseline|bau|reference|control|delta/.test(lower))
+  if (/baseline|business_as_usual|business as usual|bau|reference|control|delta/.test(lower))
     return { key: "comparison", label: "Comparison" };
   return { key: "reported", label: "Reported" };
 }

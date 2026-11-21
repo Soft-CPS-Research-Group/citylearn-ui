@@ -447,6 +447,7 @@ function formatKpiValue(value, valueStyle, unit) {
 function inferKpiUnit(label) {
   const lower = String(label || "").toLowerCase();
   if (/eur|cost|price|tariff/.test(lower)) return "EUR";
+  if (/(?:^|[^a-z])kw(?:$|[^a-z])/.test(lower)) return "kW";
   if (/kwh|energy|import|export|throughput|consumption/.test(lower)) return "kWh";
   if (/ratio|rate|percent|percentage|self[-_\s]*consumption|tolerance|feasible/.test(lower))
     return "%";
